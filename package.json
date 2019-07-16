@@ -1,0 +1,7 @@
+{
+	"private": true,
+	"workspaces": [
+		"language-service-plugin",
+		"vscode-extension"
+	]
+}

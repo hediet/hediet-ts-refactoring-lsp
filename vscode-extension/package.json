@@ -1,0 +1,48 @@
+{
+	"name": "hediet-ts-refactoring-lsp",
+	"displayName": "VS Code RPC Server",
+	"description": "",
+	"version": "0.1.0",
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.30.0"
+	},
+	"publisher": "hediet",
+	"author": {
+		"email": "henning.dieterichs@live.de",
+		"name": "Henning Dieterichs"
+	},
+	"readme": "./README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hediet/hediet-ts-refactoring-lsp.git"
+	},
+	"categories": [
+		"Other"
+	],
+	"contributes": {
+		"typescriptServerPlugins": [
+			{
+				"enableForWorkspaceTypeScriptVersions": true,
+				"name": "@hediet/ts-refactoring-lsp"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "yarn run build",
+		"build": "tsc -p ./",
+		"dev": "tsc -watch -p ./",
+		"test": "yarn run compile && node ./node_modules/vscode/bin/test"
+	},
+	"dependencies": {
+		"vscode-rpc": "^0.13.0",
+		"@hediet/ts-refactoring-lsp": "*"
+	},
+	"devDependencies": {
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^12.6.3",
+		"tslint": "^5.18.0",
+		"typescript": "^3.5.3",
+		"@types/vscode": "^1.36.0"
+	}
+}
