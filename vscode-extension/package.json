@@ -1,7 +1,7 @@
 {
 	"name": "hediet-ts-refactoring-lsp",
-	"displayName": "VS Code RPC Server",
-	"description": "",
+	"displayName": "Hediet TypeScript Refactoring Language Service Plugin",
+	"description": "This is a VS Code Extension for refactorings that I had time and fun to program.",
 	"version": "0.1.0",
 	"license": "MIT",
 	"engines": {
@@ -12,7 +12,7 @@
 		"email": "henning.dieterichs@live.de",
 		"name": "Henning Dieterichs"
 	},
-	"readme": "./README.md",
+	"readme": "../README.md",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/hediet/hediet-ts-refactoring-lsp.git"
@@ -35,8 +35,7 @@
 		"test": "yarn run compile && node ./node_modules/vscode/bin/test"
 	},
 	"dependencies": {
-		"vscode-rpc": "^0.13.0",
-		"@hediet/ts-refactoring-lsp": "*"
+		"@hediet/ts-refactoring-lsp": "0.1.0"
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",

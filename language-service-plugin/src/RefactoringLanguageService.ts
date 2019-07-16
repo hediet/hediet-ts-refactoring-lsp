@@ -5,7 +5,9 @@ import {
 	registerUpdateReconciler,
 } from "@hediet/node-reload";
 
-enableHotReload({ entryModule: module });
+if (false) {
+	enableHotReload({ entryModule: module });
+}
 registerUpdateReconciler(module);
 
 export const refactoringName = "@hediet/ts-refactoring-lsp";
