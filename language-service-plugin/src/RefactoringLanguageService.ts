@@ -5,7 +5,7 @@ import {
 	registerUpdateReconciler,
 } from "@hediet/node-reload";
 
-if (false) {
+if (true) {
 	enableHotReload({ entryModule: module });
 }
 registerUpdateReconciler(module);
@@ -31,7 +31,6 @@ export class RefactoringLanguageService {
 		if (typeof positionOrRange !== "number") {
 			positionOrRange = positionOrRange.pos;
 		}
-
 		const n = this.findTopStringLiteralConcatNode(
 			c.sourceFile,
 			positionOrRange
@@ -41,7 +40,7 @@ export class RefactoringLanguageService {
 		}
 		return [
 			{
-				name: convertStringConcatenationToStringTemplate,
+				name: refactoringName,
 				description: "Convert to String Template",
 				actions: [
 					{
@@ -76,6 +75,8 @@ export class RefactoringLanguageService {
 		if (!n) {
 			return undefined;
 		}
+
+		debugger;
 
 		const body = n.parts
 			.map(p => (p.kind === "stringPart" ? p.text : `\${${p.getText()}}`))

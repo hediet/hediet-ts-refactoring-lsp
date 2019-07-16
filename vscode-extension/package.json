@@ -35,7 +35,7 @@
 		"test": "yarn run compile && node ./node_modules/vscode/bin/test"
 	},
 	"dependencies": {
-		"@hediet/ts-refactoring-lsp": "0.1.0"
+		"@hediet/ts-refactoring-lsp": "0.1.1"
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",

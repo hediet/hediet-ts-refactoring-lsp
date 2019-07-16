@@ -10,7 +10,6 @@ import {
 
 describe("Refactoring", () => {
 	it("should refactor correctly", async () => {
-		debugger;
 		const action = {
 			refactoringName,
 			actionName: convertStringConcatenationToStringTemplate,
@@ -79,12 +78,12 @@ const expectRefactored = (
 	const refactoring = info.find(
 		i => i.name == refactoringAction.refactoringName
 	)!;
-	expect(refactoring).to.not.be.undefined;
+	expect(refactoring).not.to.be.undefined;
 
 	const action = refactoring.actions.find(
 		a => a.name === refactoringAction.actionName
 	)!;
-	expect(action).to.not.be.undefined;
+	expect(action).not.to.be.undefined;
 
 	const edit = service.getEditsForRefactor(
 		mainFile.name,
