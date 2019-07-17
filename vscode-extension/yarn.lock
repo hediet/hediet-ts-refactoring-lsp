@@ -55,13 +55,27 @@
     mobx "^5.10.0"
     sinon "^7.2.7"
 
-"@hediet/ts-refactoring-lsp@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@hediet/ts-refactoring-lsp/-/ts-refactoring-lsp-0.1.1.tgz#62118c6aeec1dd9e77f53476a2b32ed4fdbd4f39"
-  integrity sha512-ASzSQ6w5ByfItdwend70ERTWEUeT1syDhy1lAlBYqO46j/DVpVnom87Pm5e8n4if9M4bSIgSc5B4RlmC6gp9TA==
+"@hediet/ts-lsp@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@hediet/ts-lsp/-/ts-lsp-0.1.2.tgz#a5ce70ae59c5ff6dd6de110d630ff348d75c9f94"
+  integrity sha512-v9utb9p6svBCeHzXdxaKnLEWHUHV64bfJ6N6bup7RBJQCgo5WQz1NsIbqqhPhg6uDtUQ41RbpgEpCFR5HnfwWA==
   dependencies:
     "@hediet/node-reload" "^0.7.1"
+    "@hediet/typed-json-rpc" "^0.7.7"
+    "@hediet/typed-json-rpc-websocket" "^0.7.7"
+    "@hediet/typed-json-rpc-websocket-server" "^0.7.7"
     typescript "^3.5.3"
+    ws "^7.1.0"
+
+"@hediet/typed-json-rpc-websocket-server@^0.7.7":
+  version "0.7.7"
+  resolved "https://registry.yarnpkg.com/@hediet/typed-json-rpc-websocket-server/-/typed-json-rpc-websocket-server-0.7.7.tgz#36c4d9f63b487454437c148c1d41f1fd6684071d"
+  integrity sha512-/xh3iyu9QcBWXT/vx+eTrLQirFufpI6f6oOQ9A2yTctt5sh6AAkXLutdxNJn5ADOoWATvTbyvOvufN+71uUuUg==
+  dependencies:
+    "@hediet/std" "^0.6.0"
+    "@hediet/typed-json-rpc" "^0.7.5"
+    "@types/ws" "^6.0.1"
+    ws "^7.0.0"
 
 "@hediet/typed-json-rpc-websocket@^0.7.7":
   version "0.7.7"
@@ -72,7 +86,7 @@
     "@types/ws" "^6.0.1"
     isomorphic-ws "^4.0.1"
 
-"@hediet/typed-json-rpc@^0.7.5", "@hediet/typed-json-rpc@^0.7.6":
+"@hediet/typed-json-rpc@^0.7.5", "@hediet/typed-json-rpc@^0.7.6", "@hediet/typed-json-rpc@^0.7.7":
   version "0.7.7"
   resolved "https://registry.yarnpkg.com/@hediet/typed-json-rpc/-/typed-json-rpc-0.7.7.tgz#bd7e586ad5c0480f7bd6bc40d6ad202e0a80b54d"
   integrity sha512-lyjbVqt+mFrRS0+2cOVDithtfG9gfRV5CJMVDwV+F2gfCUjTe1aZu4xObpDDLfxfoZOGgtPNNg6jCNhvXSxQHg==
@@ -663,7 +677,7 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
 
-ws@^7.0.0:
+ws@^7.0.0, ws@^7.1.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.1.0.tgz#0395646c6fcc3ac56abf61ce1a42039637a6bd98"
   integrity sha512-Swie2C4fs7CkwlHu1glMePLYJJsWjzhl1vm3ZaLplD0h7OMkZyZ6kLTB/OagiU923bZrPFXuDTeEqaEN4NWG4g==

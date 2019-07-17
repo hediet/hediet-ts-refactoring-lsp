@@ -1,18 +1,18 @@
 {
-	"name": "hediet-ts-refactoring-lsp",
-	"displayName": "Hediet TypeScript Refactoring Language Service Plugin",
-	"description": "This is a VS Code Extension for refactorings that I had time and fun to program.",
-	"version": "0.1.0",
+	"name": "hediet-ts-lsp",
+	"displayName": "Hediets TypeScript Language Service Plugin",
+	"description": "This is a VS Code Extension for refactorings and code actions that I had time and fun to program.",
+	"version": "0.2.4",
 	"license": "MIT",
 	"engines": {
-		"vscode": "^1.30.0"
+		"vscode": "^1.36.0"
 	},
 	"publisher": "hediet",
 	"author": {
 		"email": "henning.dieterichs@live.de",
 		"name": "Henning Dieterichs"
 	},
-	"readme": "../README.md",
+	"readme": "./README.md",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/hediet/hediet-ts-refactoring-lsp.git"
@@ -20,11 +20,23 @@
 	"categories": [
 		"Other"
 	],
+	"activationEvents": [
+		"onLanguage:typescript",
+		"onCommand:hediet-ts-lsp.smarter-select"
+	],
+	"main": "out/index",
 	"contributes": {
 		"typescriptServerPlugins": [
 			{
 				"enableForWorkspaceTypeScriptVersions": true,
-				"name": "@hediet/ts-refactoring-lsp"
+				"name": "@hediet/ts-lsp"
+			}
+		],
+		"commands": [
+			{
+				"enablement": "resourceLangId == typescript",
+				"title": "Smarter Select",
+				"command": "hediet-ts-lsp.smarter-select"
 			}
 		]
 	},
@@ -35,13 +47,18 @@
 		"test": "yarn run compile && node ./node_modules/vscode/bin/test"
 	},
 	"dependencies": {
-		"@hediet/ts-refactoring-lsp": "0.1.1"
+		"@hediet/node-reload": "^0.7.1",
+		"@hediet/std": "^0.6.0",
+		"@hediet/ts-lsp": "0.1.2",
+		"@hediet/typed-json-rpc": "^0.7.7",
+		"@hediet/typed-json-rpc-websocket": "^0.7.7",
+		"ws": "^7.1.0"
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^12.6.3",
+		"@types/vscode": "^1.36.0",
 		"tslint": "^5.18.0",
-		"typescript": "^3.5.3",
-		"@types/vscode": "^1.36.0"
+		"typescript": "^3.5.3"
 	}
 }

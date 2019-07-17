@@ -4,10 +4,8 @@ import {
 	enableHotReload,
 	registerUpdateReconciler,
 } from "@hediet/node-reload";
+import { findChild } from "./utils";
 
-if (true) {
-	enableHotReload({ entryModule: module });
-}
 registerUpdateReconciler(module);
 
 export const refactoringName = "@hediet/ts-refactoring-lsp";
@@ -17,7 +15,10 @@ export const convertStringConcatenationToStringTemplate =
 
 @hotClass(module)
 export class RefactoringLanguageService {
-	constructor(private readonly base: ts.LanguageService) {}
+	constructor(
+		private readonly typescript: typeof ts,
+		private readonly base: ts.LanguageService
+	) {}
 
 	getApplicableRefactors(
 		fileName: string,
@@ -28,6 +29,7 @@ export class RefactoringLanguageService {
 		if (!c) {
 			return [];
 		}
+
 		if (typeof positionOrRange !== "number") {
 			positionOrRange = positionOrRange.pos;
 		}
@@ -75,8 +77,6 @@ export class RefactoringLanguageService {
 		if (!n) {
 			return undefined;
 		}
-
-		debugger;
 
 		const body = n.parts
 			.map(p => (p.kind === "stringPart" ? p.text : `\${${p.getText()}}`))
@@ -132,15 +132,15 @@ export class RefactoringLanguageService {
 				parts: (ts.Node | { kind: "stringPart"; text: string })[];
 		  }
 		| undefined {
-		let n = this.findChild(sf, position);
+		let n = findChild(sf, position);
 		if (!n) {
 			return undefined;
 		}
 
 		while (
 			n.parent &&
-			(ts.isBinaryExpression(n.parent) ||
-				ts.isParenthesizedExpression(n.parent))
+			(this.typescript.isBinaryExpression(n.parent) ||
+				this.typescript.isParenthesizedExpression(n.parent))
 		) {
 			n = n.parent;
 		}
@@ -159,10 +159,10 @@ export class RefactoringLanguageService {
 		node: ts.Node,
 		parts: (ts.Node | { kind: "stringPart"; text: string })[]
 	): "stringSequence" | "argument" {
-		if (ts.isStringLiteral(node)) {
+		if (this.typescript.isStringLiteral(node)) {
 			parts.push({ kind: "stringPart", text: node.text });
 			return "stringSequence";
-		} else if (ts.isBinaryExpression(node)) {
+		} else if (this.typescript.isBinaryExpression(node)) {
 			const p1 = this.classifyStringLiteral(node.left, parts);
 			if (p1 === "argument") {
 				return "argument";
@@ -172,35 +172,10 @@ export class RefactoringLanguageService {
 				parts.push(node.right);
 			}
 			return "stringSequence";
-		} else if (ts.isParenthesizedExpression(node)) {
+		} else if (this.typescript.isParenthesizedExpression(node)) {
 			return this.classifyStringLiteral(node.expression, parts);
 		}
 
 		return "argument";
-	}
-
-	private findChild(node: ts.Node, position: number): ts.Node | undefined {
-		if (!(node.getStart() < position && position < node.getEnd())) {
-			return undefined;
-		}
-		let result: ts.Node = node;
-		node.forEachChild(
-			node => {
-				const c = this.findChild(node, position);
-				if (c) {
-					result = c;
-				}
-			},
-			arr => {
-				for (const item of arr) {
-					const c = this.findChild(item, position);
-					if (c) {
-						result = c;
-					}
-				}
-			}
-		);
-
-		return result;
 	}
 }

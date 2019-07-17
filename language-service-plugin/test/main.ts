@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import * as ts from "typescript";
+import * as ts from "typescript/lib/tsserverlibrary";
 import { createDecoratedLanguageService } from "../src/createDecoratedLanguageService";
 import { MockLanguageServiceHost } from "./MockLanguageServiceHost";
 import { stripMarkers, applyTextChange } from "./utils";
@@ -60,7 +60,7 @@ function testSingleFileService(content: string, fn: TestFn): void {
 		ts.createDocumentRegistry()
 	);
 
-	const service = createDecoratedLanguageService(baseService);
+	const service = createDecoratedLanguageService(ts, baseService);
 
 	fn(service, main.markers, { name: filename, content: main.stripped });
 }

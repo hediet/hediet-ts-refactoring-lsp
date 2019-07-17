@@ -1,6 +1,7 @@
 {
 	"private": true,
 	"workspaces": [
-		"language-service-plugin"
+		"language-service-plugin",
+		"vscode-extension2"
 	]
 }
