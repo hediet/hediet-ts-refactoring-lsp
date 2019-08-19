@@ -1,7 +1,7 @@
 import * as ts from "typescript/lib/tsserverlibrary";
 import { enableHotReload } from "@hediet/node-reload";
 
-if (false) {
+if (process.env.NODE_ENV === "development") {
 	require("C:\\Users\\henni\\AppData\\Local\\Yarn\\Data\\global\\node_modules\\easy-attach\\")(
 		{
 			eagerExitDebugProxy: true,
@@ -14,12 +14,12 @@ if (false) {
 	enableHotReload({ entryModule: module });
 }
 
-import { createDecoratedLanguageService } from "./createDecoratedLanguageService";
+import { createLanguageServiceWithRefactorings } from "./Refactorings/createLanguageServiceWithRefactorings";
 
 export = function init(modules: { typescript: typeof ts }) {
 	return {
 		create(info: ts.server.PluginCreateInfo): ts.LanguageService {
-			return createDecoratedLanguageService(
+			return createLanguageServiceWithRefactorings(
 				modules.typescript,
 				info.languageService,
 				info.project.projectService

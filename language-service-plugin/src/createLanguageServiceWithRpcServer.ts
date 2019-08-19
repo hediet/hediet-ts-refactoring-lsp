@@ -1,33 +1,17 @@
 import * as ts from "typescript/lib/tsserverlibrary";
-import { RefactoringLanguageService } from "./RefactoringLanguageService";
 import { RpcServer } from "./RpcServer";
 
-export function createDecoratedLanguageService(
+export function createLanguageServiceWithRpcServer(
 	typescript: typeof ts,
 	base: ts.LanguageService,
 	projectService?: ts.server.ProjectService
 ): ts.LanguageService {
-	const service = new RefactoringLanguageService(typescript, base);
-
 	const rpcServer = projectService
 		? new RpcServer(typescript, projectService)
 		: undefined;
 
 	return {
 		...base,
-
-		getApplicableRefactors: (...args) => {
-			const existing = base.getApplicableRefactors(...args);
-			const ours = service.getApplicableRefactors(...args);
-			return [...ours, ...existing];
-		},
-
-		getEditsForRefactor: (...args): ts.RefactorEditInfo | undefined => {
-			return (
-				base.getEditsForRefactor(...args) ||
-				service.getEditsForRefactor(...args)
-			);
-		},
 
 		getQuickInfoAtPosition: (fileName, position) => {
 			if (rpcServer && position === 999999999999999999 + 1) {
