@@ -7,7 +7,7 @@ import {
 } from "./utils";
 import { ConvertToStringTemplateRefactoringProvider } from "../src/Refactorings/ConvertToStringTemplateRefactoringProvider";
 
-describe("convertStringConcatenationToStringTemplate", () => {
+describe("convertToStringTemplate", () => {
 	const action = {
 		refactoringName:
 			ConvertToStringTemplateRefactoringProvider.refactoringName,
