@@ -19,11 +19,11 @@ import { createLanguageServiceWithRefactorings } from "./Refactorings/createLang
 export = function init(modules: { typescript: typeof ts }) {
 	return {
 		create(info: ts.server.PluginCreateInfo): ts.LanguageService {
-			return createLanguageServiceWithRefactorings(
+			let decorated = createLanguageServiceWithRefactorings(
 				modules.typescript,
-				info.languageService,
-				info.project.projectService
+				info.languageService
 			);
+			return decorated;
 		},
 	};
 };

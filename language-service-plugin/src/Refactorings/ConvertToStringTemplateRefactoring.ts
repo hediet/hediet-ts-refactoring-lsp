@@ -6,7 +6,7 @@ import { RefactorProvider, Refactor } from "./RefactorProvider";
 registerUpdateReconciler(module);
 
 @hotClass(module)
-export class ConvertToStringTemplateRefactoringProvider extends RefactorProvider {
+export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 	public static readonly refactoringName = "@hediet/ts-refactoring-lsp";
 	public static readonly convertToStringTemplate = "convertToStringTemplate";
 
@@ -32,14 +32,13 @@ export class ConvertToStringTemplateRefactoringProvider extends RefactorProvider
 
 		return [
 			{
-				name:
-					ConvertToStringTemplateRefactoringProvider.refactoringName,
+				name: ConvertToStringTemplateRefactoring.refactoringName,
 				description: "Convert to String Template",
 				actions: [
 					{
 						description: "Convert to String Template",
 						name:
-							ConvertToStringTemplateRefactoringProvider.convertToStringTemplate,
+							ConvertToStringTemplateRefactoring.convertToStringTemplate,
 						getEdits: (formatOptions, preferences) => {
 							return this.getEdits(
 								context.sourceFile,

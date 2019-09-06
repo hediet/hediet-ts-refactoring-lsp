@@ -4,11 +4,9 @@ import { RpcServer } from "./RpcServer";
 export function createLanguageServiceWithRpcServer(
 	typescript: typeof ts,
 	base: ts.LanguageService,
-	projectService?: ts.server.ProjectService
+	projectService: ts.server.ProjectService
 ): ts.LanguageService {
-	const rpcServer = projectService
-		? new RpcServer(typescript, projectService)
-		: undefined;
+	const rpcServer = new RpcServer(typescript, projectService);
 
 	return {
 		...base,

@@ -1,15 +1,14 @@
 import * as ts from "typescript/lib/tsserverlibrary";
-import { ConvertToStringTemplateRefactoringProvider } from "./ConvertToStringTemplateRefactoringProvider";
+import { ConvertToStringTemplateRefactoring } from "./ConvertToStringTemplateRefactoring";
 
 import { registerAll } from "S:\\dev\\vscode\\vscode-debug-visualizer\\data-extraction";
 registerAll();
 
 export function createLanguageServiceWithRefactorings(
 	typescript: typeof ts,
-	base: ts.LanguageService,
-	projectService?: ts.server.ProjectService
+	base: ts.LanguageService
 ): ts.LanguageService {
-	const refactoringProvdier = new ConvertToStringTemplateRefactoringProvider(
+	const refactoringProvider = new ConvertToStringTemplateRefactoring(
 		typescript,
 		base
 	);
@@ -44,7 +43,7 @@ export function createLanguageServiceWithRefactorings(
 			if (!context) {
 				return existing;
 			}
-			const refactorings = refactoringProvdier.getRefactors({
+			const refactorings = refactoringProvider.getRefactors({
 				...context,
 				positionOrRange,
 			});
@@ -75,7 +74,7 @@ export function createLanguageServiceWithRefactorings(
 			if (!context) {
 				return undefined;
 			}
-			const refactorings = refactoringProvdier.getRefactors({
+			const refactorings = refactoringProvider.getRefactors({
 				...context,
 				positionOrRange,
 			});

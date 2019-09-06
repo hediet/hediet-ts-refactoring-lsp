@@ -6,11 +6,23 @@ export abstract class RefactorProvider {
 		protected readonly base: ts.LanguageService
 	) {}
 
-	abstract getRefactors(context: {
-		program: ts.Program;
-		positionOrRange: number | ts.TextRange;
-		sourceFile: ts.SourceFile;
-	}): Refactor[];
+	/**
+	 * @param filter The filter that is applied to the returned refactors.
+	 * Can be used for performance optimizations.
+	 */
+	abstract getRefactors(
+		context: {
+			program: ts.Program;
+			positionOrRange: number | ts.TextRange;
+			sourceFile: ts.SourceFile;
+		},
+		filter: RefactorFilter
+	): Refactor[];
+}
+
+export interface RefactorFilter {
+	refactorName?: string;
+	actionName?: string;
 }
 
 export interface Refactor {

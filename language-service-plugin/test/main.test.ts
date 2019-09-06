@@ -5,43 +5,53 @@ import {
 	expectRefactoring,
 	expectNoRefactoring,
 } from "./utils";
-import { ConvertToStringTemplateRefactoringProvider } from "../src/Refactorings/ConvertToStringTemplateRefactoringProvider";
+import { ConvertToStringTemplateRefactoring } from "../src/Refactorings/ConvertToStringTemplateRefactoring";
+import { createLanguageServiceWithRefactorings } from "../src/Refactorings/createLanguageServiceWithRefactorings";
+import ts = require("typescript/lib/tsserverlibrary");
 
 describe("convertToStringTemplate", () => {
 	const action = {
-		refactoringName:
-			ConvertToStringTemplateRefactoringProvider.refactoringName,
-		actionName:
-			ConvertToStringTemplateRefactoringProvider.convertToStringTemplate,
+		refactoringName: ConvertToStringTemplateRefactoring.refactoringName,
+		actionName: ConvertToStringTemplateRefactoring.convertToStringTemplate,
 	};
+
+	const decorateWithRefactorings = (base: ts.LanguageService) =>
+		createLanguageServiceWithRefactorings(ts, base);
 
 	describe("Expect Refactoring", () => {
 		testSingleFileLanguageService(
 			`const str = "|hello";`,
+			decorateWithRefactorings,
 			expectRefactoring(action, "const str = `hello`;")
 		);
 		testSingleFileLanguageService(
 			`const str = "hello|";`,
+			decorateWithRefactorings,
 			expectRefactoring(action, "const str = `hello`;")
 		);
 		testSingleFileLanguageService(
 			`const str = "hello" |+ i;`,
+			decorateWithRefactorings,
 			expectRefactoring(action, "const str = `hello${i}`;")
 		);
 		testSingleFileLanguageService(
 			`const str = i |+ "hello";`,
+			decorateWithRefactorings,
 			expectRefactoring(action, "const str = `${i}hello`;")
 		);
 		testSingleFileLanguageService(
 			`const str = ("hello" |+ i) + 1;`,
+			decorateWithRefactorings,
 			expectRefactoring(action, "const str = `hello${i}${1}`;")
 		);
 		testSingleFileLanguageService(
 			`const str = "hello" |+ (i + 1);`,
+			decorateWithRefactorings,
 			expectRefactoring(action, "const str = `hello${i + 1}`;")
 		);
 		testSingleFileLanguageService(
 			`const str = (1 + "hello" |+ i) + 1;`,
+			decorateWithRefactorings,
 			expectRefactoring(action, "const str = `${1}hello${i}${1}`;")
 		);
 	});
@@ -49,10 +59,12 @@ describe("convertToStringTemplate", () => {
 	describe("Expect No Refactoring", () => {
 		testSingleFileLanguageService(
 			`const str = "test";|`,
+			decorateWithRefactorings,
 			expectNoRefactoring(action.refactoringName)
 		);
 		testSingleFileLanguageService(
 			`const str = 1 +| 1;`,
+			decorateWithRefactorings,
 			expectNoRefactoring(action.refactoringName)
 		);
 	});

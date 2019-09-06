@@ -1,6 +1,5 @@
 import { MockLanguageServiceHost } from "./MockLanguageServiceHost";
 import ts = require("typescript/lib/tsserverlibrary");
-import { createLanguageServiceWithRefactorings } from "../src/Refactorings/createLanguageServiceWithRefactorings";
 import { expect } from "chai";
 
 export function stripMarkers(
@@ -49,6 +48,7 @@ type TestFn = (
  */
 export function testSingleFileLanguageService(
 	content: string,
+	decorator: (base: ts.LanguageService) => ts.LanguageService,
 	testFn: TestFn
 ): void {
 	it(content, () => {
@@ -62,10 +62,7 @@ export function testSingleFileLanguageService(
 			serviceHost,
 			ts.createDocumentRegistry()
 		);
-		const decoratedService = createLanguageServiceWithRefactorings(
-			ts,
-			baseService
-		);
+		const decoratedService = decorator(baseService);
 		testFn(decoratedService, main.markers, mainFile);
 	});
 }
