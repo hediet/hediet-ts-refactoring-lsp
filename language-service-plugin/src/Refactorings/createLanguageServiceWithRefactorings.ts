@@ -1,14 +1,12 @@
 import * as ts from "typescript/lib/tsserverlibrary";
 import { ConvertToStringTemplateRefactoring } from "./ConvertToStringTemplateRefactoring";
-
-import { registerAll } from "S:\\dev\\vscode\\vscode-debug-visualizer\\data-extraction";
-registerAll();
+import { RefactorProvider } from "./RefactorProvider";
 
 export function createLanguageServiceWithRefactorings(
 	typescript: typeof ts,
 	base: ts.LanguageService
 ): ts.LanguageService {
-	const refactoringProvider = new ConvertToStringTemplateRefactoring(
+	const refactoringProvider: RefactorProvider = new ConvertToStringTemplateRefactoring(
 		typescript,
 		base
 	);
@@ -49,10 +47,13 @@ export function createLanguageServiceWithRefactorings(
 					end: positionOrRange,
 				};
 			}
-			const refactorings = refactoringProvider.getRefactors({
-				...context,
-				range: positionOrRange,
-			});
+			const refactorings = refactoringProvider.getRefactors(
+				{
+					...context,
+					range: positionOrRange,
+				},
+				{ refactorName: undefined, actionName: undefined }
+			);
 			return [...refactorings, ...existing];
 		},
 
@@ -86,10 +87,13 @@ export function createLanguageServiceWithRefactorings(
 					end: positionOrRange,
 				};
 			}
-			const refactorings = refactoringProvider.getRefactors({
-				...context,
-				range: positionOrRange,
-			});
+			const refactorings = refactoringProvider.getRefactors(
+				{
+					...context,
+					range: positionOrRange,
+				},
+				{ refactorName, actionName }
+			);
 
 			const r = refactorings.find(r => r.name === refactorName);
 			if (!r) {
