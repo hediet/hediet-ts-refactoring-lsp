@@ -16,7 +16,9 @@ export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 		sourceFile: ts.SourceFile;
 	}): Refactor[] {
 		let child = findInnerMostNodeAt(context.sourceFile, context.range.pos);
-		if (!child) { return []; }
+		if (!child) {
+			return [];
+		}
 		const node = this.getSuitableOuterMostParent(child);
 		const parts = this.getParts(node);
 		if (parts.kind !== "stringLiteralSequence") {
@@ -25,14 +27,9 @@ export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 
 		const action: RefactorAction = {
 			description: "Convert to String Template",
-			name:
-				ConvertToStringTemplateRefactoring.convertToStringTemplate,
+			name: ConvertToStringTemplateRefactoring.convertToStringTemplate,
 			getEdits: (formatOptions, preferences) => {
-				return this.getEdits(
-					context.sourceFile,
-					node,
-					parts.parts
-				);
+				return this.getEdits(context.sourceFile, node, parts.parts);
 			},
 		};
 
@@ -40,19 +37,16 @@ export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 			{
 				name: ConvertToStringTemplateRefactoring.refactoringName,
 				description: "Convert to String Template",
-				actions: [ action ],
+				actions: [action],
 			},
 		];
 	}
 
-	private getSuitableOuterMostParent(
-		n: ts.Node
-	): ts.Node {
+	private getSuitableOuterMostParent(n: ts.Node): ts.Node {
 		while (
 			n.parent &&
 			((this.ts.isBinaryExpression(n.parent) &&
-				n.parent.operatorToken.kind ===
-					this.ts.SyntaxKind.PlusToken) ||
+				n.parent.operatorToken.kind === this.ts.SyntaxKind.PlusToken) ||
 				this.ts.isParenthesizedExpression(n.parent))
 		) {
 			n = n.parent;
