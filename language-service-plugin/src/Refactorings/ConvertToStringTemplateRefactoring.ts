@@ -1,7 +1,7 @@
 import { hotClass, registerUpdateReconciler } from "@hediet/node-reload";
 import * as ts from "typescript";
-import { findChild } from "../utils";
-import { RefactorProvider, Refactor } from "./RefactorProvider";
+import { findChild as findInnerMostNodeAt } from "../utils";
+import { RefactorProvider, Refactor, RefactorAction } from "./RefactorProvider";
 
 registerUpdateReconciler(module);
 
@@ -12,61 +12,48 @@ export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 
 	getRefactors(context: {
 		program: ts.Program;
-		positionOrRange: number | ts.TextRange;
+		range: ts.TextRange;
 		sourceFile: ts.SourceFile;
 	}): Refactor[] {
-		let positionOrRange = context.positionOrRange;
-		if (typeof positionOrRange !== "number") {
-			positionOrRange = positionOrRange.pos;
-		}
-		const n = this.findTopMostNode(context.sourceFile, positionOrRange);
-
-		if (!n) {
+		let child = findInnerMostNodeAt(context.sourceFile, context.range.pos);
+		if (!child) { return []; }
+		const node = this.getSuitableOuterMostParent(child);
+		const parts = this.getParts(node);
+		if (parts.kind !== "stringLiteralSequence") {
 			return [];
 		}
 
-		const r = this.getParts(n);
-		if (r.kind !== "sequence") {
-			return [];
-		}
+		const action: RefactorAction = {
+			description: "Convert to String Template",
+			name:
+				ConvertToStringTemplateRefactoring.convertToStringTemplate,
+			getEdits: (formatOptions, preferences) => {
+				return this.getEdits(
+					context.sourceFile,
+					node,
+					parts.parts
+				);
+			},
+		};
 
 		return [
 			{
 				name: ConvertToStringTemplateRefactoring.refactoringName,
 				description: "Convert to String Template",
-				actions: [
-					{
-						description: "Convert to String Template",
-						name:
-							ConvertToStringTemplateRefactoring.convertToStringTemplate,
-						getEdits: (formatOptions, preferences) => {
-							return this.getEdits(
-								context.sourceFile,
-								n,
-								r.parts
-							);
-						},
-					},
-				],
+				actions: [ action ],
 			},
 		];
 	}
 
-	private findTopMostNode(
-		sf: ts.SourceFile,
-		position: number
-	): ts.Node | undefined {
-		let n = findChild(sf, position);
-		if (!n) {
-			return undefined;
-		}
-
+	private getSuitableOuterMostParent(
+		n: ts.Node
+	): ts.Node {
 		while (
 			n.parent &&
-			((this.typescript.isBinaryExpression(n.parent) &&
+			((this.ts.isBinaryExpression(n.parent) &&
 				n.parent.operatorToken.kind ===
-					this.typescript.SyntaxKind.PlusToken) ||
-				this.typescript.isParenthesizedExpression(n.parent))
+					this.ts.SyntaxKind.PlusToken) ||
+				this.ts.isParenthesizedExpression(n.parent))
 		) {
 			n = n.parent;
 		}
@@ -78,28 +65,28 @@ export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 		node: ts.Node
 	):
 		| {
-				kind: "sequence";
+				kind: "stringLiteralSequence";
 				parts: (ts.Node | { kind: "stringPart"; text: string })[];
 		  }
 		| { kind: "node"; parts: [ts.Node] } {
-		if (this.typescript.isStringLiteral(node)) {
+		if (this.ts.isStringLiteral(node)) {
 			return {
-				kind: "sequence",
+				kind: "stringLiteralSequence",
 				parts: [{ kind: "stringPart", text: node.text }],
 			};
-		} else if (this.typescript.isBinaryExpression(node)) {
+		} else if (this.ts.isBinaryExpression(node)) {
 			const p1 = this.getParts(node.left);
 			const p2 = this.getParts(node.right);
 			if (p1.kind === "node" && p2.kind === "node") {
 				return { kind: "node", parts: [node] };
 			}
 			return {
-				kind: "sequence",
+				kind: "stringLiteralSequence",
 				parts: new Array<
 					ts.Node | { kind: "stringPart"; text: string }
 				>().concat(p1.parts, p2.parts),
 			};
-		} else if (this.typescript.isParenthesizedExpression(node)) {
+		} else if (this.ts.isParenthesizedExpression(node)) {
 			return this.getParts(node.expression);
 		}
 

@@ -1,9 +1,9 @@
-import * as ts from "typescript";
+import * as typescript from "typescript";
 
 export abstract class RefactorProvider {
 	constructor(
-		protected readonly typescript: typeof ts,
-		protected readonly base: ts.LanguageService
+		protected readonly ts: typeof typescript,
+		protected readonly base: typescript.LanguageService
 	) {}
 
 	/**
@@ -12,9 +12,9 @@ export abstract class RefactorProvider {
 	 */
 	abstract getRefactors(
 		context: {
-			program: ts.Program;
-			positionOrRange: number | ts.TextRange;
-			sourceFile: ts.SourceFile;
+			program: typescript.Program;
+			range: typescript.TextRange;
+			sourceFile: typescript.SourceFile;
 		},
 		filter: RefactorFilter
 	): Refactor[];
@@ -35,7 +35,7 @@ export interface RefactorAction {
 	name: string;
 	description: string;
 	getEdits(
-		formatOptions: ts.FormatCodeSettings,
-		preferences: ts.UserPreferences | undefined
-	): ts.RefactorEditInfo | undefined;
+		formatOptions: typescript.FormatCodeSettings,
+		preferences: typescript.UserPreferences | undefined
+	): typescript.RefactorEditInfo | undefined;
 }

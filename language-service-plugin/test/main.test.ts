@@ -54,6 +54,11 @@ describe("convertToStringTemplate", () => {
 			decorateWithRefactorings,
 			expectRefactoring(action, "const str = `${1}hello${i}${1}`;")
 		);
+		testSingleFileLanguageService(
+			`const str = 1 + ("hell|o" + i) && 'b';`,
+			decorateWithRefactorings,
+			expectRefactoring(action, "const str = `${1}hello${i}` && 'b';")
+		);
 	});
 
 	describe("Expect No Refactoring", () => {

@@ -43,9 +43,12 @@ export function createLanguageServiceWithRefactorings(
 			if (!context) {
 				return existing;
 			}
+			if (typeof positionOrRange === "number") {
+				positionOrRange = { pos: positionOrRange, end: positionOrRange };
+			}
 			const refactorings = refactoringProvider.getRefactors({
 				...context,
-				positionOrRange,
+				range: positionOrRange,
 			});
 			return [...refactorings, ...existing];
 		},
@@ -74,9 +77,12 @@ export function createLanguageServiceWithRefactorings(
 			if (!context) {
 				return undefined;
 			}
+			if (typeof positionOrRange === "number") {
+				positionOrRange = { pos: positionOrRange, end: positionOrRange };
+			}
 			const refactorings = refactoringProvider.getRefactors({
 				...context,
-				positionOrRange,
+				range: positionOrRange,
 			});
 
 			const r = refactorings.find(r => r.name === refactorName);
