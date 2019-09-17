@@ -1,14 +1,18 @@
 import { hotClass, registerUpdateReconciler } from "@hediet/node-reload";
 import * as ts from "typescript";
 import { findChild as findInnerMostNodeAt } from "../utils";
-import { RefactorProvider, Refactor, RefactorAction } from "./RefactorProvider";
+import {
+	RefactorProviderBase,
+	Refactor,
+	RefactorAction,
+} from "./RefactorProvider";
 
 registerUpdateReconciler(module);
 
 @hotClass(module)
-export class ConvertToStringTemplateRefactoring extends RefactorProvider {
+export class ConvertToStringTemplateRefactoring extends RefactorProviderBase {
 	public static readonly refactoringName = "@hediet/ts-refactoring-lsp";
-	public static readonly convertToStringTemplate = "convertToStringTemplate";
+	public static readonly actionName = "convertToStringTemplate";
 
 	getRefactors(context: {
 		program: ts.Program;
@@ -27,7 +31,7 @@ export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 
 		const action: RefactorAction = {
 			description: "Convert to String Template",
-			name: ConvertToStringTemplateRefactoring.convertToStringTemplate,
+			name: ConvertToStringTemplateRefactoring.actionName,
 			getEdits: (formatOptions, preferences) => {
 				return this.getEdits(context.sourceFile, node, parts.parts);
 			},

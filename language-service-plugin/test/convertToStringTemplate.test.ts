@@ -1,5 +1,3 @@
-process.env.NODE_ENV = "development";
-
 import {
 	testSingleFileLanguageService,
 	expectRefactoring,
@@ -8,11 +6,12 @@ import {
 import { ConvertToStringTemplateRefactoring } from "../src/Refactorings/ConvertToStringTemplateRefactoring";
 import { createLanguageServiceWithRefactorings } from "../src/Refactorings/createLanguageServiceWithRefactorings";
 import ts = require("typescript/lib/tsserverlibrary");
+import { DestructureExpression } from "../src/Refactorings/DestructureExpression";
 
 describe("convertToStringTemplate", () => {
 	const action = {
 		refactoringName: ConvertToStringTemplateRefactoring.refactoringName,
-		actionName: ConvertToStringTemplateRefactoring.convertToStringTemplate,
+		actionName: ConvertToStringTemplateRefactoring.actionName,
 	};
 
 	const decorateWithRefactorings = (base: ts.LanguageService) =>

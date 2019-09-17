@@ -8,7 +8,7 @@
 			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}/vscode-extension",
-				"S:\\dev\\ts\\hediet-config"
+				"S:\\dev\\2019\\ts\\hediet-config"
 			],
 			"outFiles": ["${workspaceFolder}/vscode-extension/out/**/*.js"],
 			"preLaunchTask": "npm: dev - vscode-extension"

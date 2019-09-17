@@ -2,7 +2,7 @@ export function findChild(
 	node: ts.Node,
 	position: number
 ): ts.Node | undefined {
-	if (!(node.getStart() < position && position < node.getEnd())) {
+	if (!(node.getStart() <= position && position <= node.getEnd())) {
 		return undefined;
 	}
 	let result: ts.Node = node;

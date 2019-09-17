@@ -1,3 +1,4 @@
+process.env.NODE_ENV = "development";
 import { MockLanguageServiceHost } from "./MockLanguageServiceHost";
 import ts = require("typescript/lib/tsserverlibrary");
 import { expect } from "chai";
@@ -51,7 +52,7 @@ export function testSingleFileLanguageService(
 	decorator: (base: ts.LanguageService) => ts.LanguageService,
 	testFn: TestFn
 ): void {
-	it(content, () => {
+	it(content.replace(/(\n| )+/g, " "), () => {
 		const main = stripMarkers(content);
 		const mainFile = { name: "main.ts", content: main.stripped };
 		const files = new Map<string, string>([

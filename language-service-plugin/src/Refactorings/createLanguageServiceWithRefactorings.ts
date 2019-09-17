@@ -1,15 +1,16 @@
 import * as ts from "typescript/lib/tsserverlibrary";
 import { ConvertToStringTemplateRefactoring } from "./ConvertToStringTemplateRefactoring";
-import { RefactorProvider } from "./RefactorProvider";
+import { RefactorProvider, ComposedRefactorProvider } from "./RefactorProvider";
+import { DestructureExpression } from "./DestructureExpression";
 
 export function createLanguageServiceWithRefactorings(
 	typescript: typeof ts,
 	base: ts.LanguageService
 ): ts.LanguageService {
-	const refactoringProvider: RefactorProvider = new ConvertToStringTemplateRefactoring(
-		typescript,
-		base
-	);
+	const refactoringProvider: RefactorProvider = new ComposedRefactorProvider([
+		new ConvertToStringTemplateRefactoring(typescript, base),
+		new DestructureExpression(typescript, base),
+	]);
 
 	function getContext(
 		fileName: string

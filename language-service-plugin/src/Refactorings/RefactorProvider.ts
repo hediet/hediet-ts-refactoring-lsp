@@ -1,11 +1,6 @@
 import * as typescript from "typescript";
 
 export abstract class RefactorProvider {
-	constructor(
-		protected readonly ts: typeof typescript,
-		protected readonly base: typescript.LanguageService
-	) {}
-
 	/**
 	 * @param filter The filter that is applied to the returned refactors.
 	 * Can be used for performance optimizations.
@@ -18,6 +13,15 @@ export abstract class RefactorProvider {
 		},
 		filter: RefactorFilter
 	): Refactor[];
+}
+
+export abstract class RefactorProviderBase extends RefactorProvider {
+	constructor(
+		protected readonly ts: typeof typescript,
+		protected readonly base: typescript.LanguageService
+	) {
+		super();
+	}
 }
 
 export interface RefactorFilter {
@@ -38,4 +42,25 @@ export interface RefactorAction {
 		formatOptions: typescript.FormatCodeSettings,
 		preferences: typescript.UserPreferences | undefined
 	): typescript.RefactorEditInfo | undefined;
+}
+
+export class ComposedRefactorProvider extends RefactorProvider {
+	constructor(private readonly refactorProviders: RefactorProvider[]) {
+		super();
+	}
+	getRefactors(
+		context: {
+			program: typescript.Program;
+			range: typescript.TextRange;
+			sourceFile: typescript.SourceFile;
+		},
+		filter: RefactorFilter
+	): Refactor[] {
+		const refactors = new Array<Refactor>();
+
+		for (const p of this.refactorProviders) {
+			refactors.push(...p.getRefactors(context, filter));
+		}
+		return refactors;
+	}
 }
