@@ -2,6 +2,7 @@ import * as ts from "typescript/lib/tsserverlibrary";
 import { ConvertToStringTemplateRefactoring } from "./ConvertToStringTemplateRefactoring";
 import { RefactorProvider, ComposedRefactorProvider } from "./RefactorProvider";
 import { DestructureExpression } from "./DestructureExpression";
+import { CustomRefactoringProvider } from "./CustomRefactoringProvider";
 
 export function createLanguageServiceWithRefactorings(
 	typescript: typeof ts,
@@ -10,6 +11,12 @@ export function createLanguageServiceWithRefactorings(
 	const refactoringProvider: RefactorProvider = new ComposedRefactorProvider([
 		new ConvertToStringTemplateRefactoring(typescript, base),
 		new DestructureExpression(typescript, base),
+		new CustomRefactoringProvider(
+			typescript,
+			base,
+			"C:\\Users\\Henning\\Desktop\\playground\\my-refactorings\\src\\",
+			"*.refactoring.ts"
+		),
 	]);
 
 	function getContext(

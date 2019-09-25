@@ -15,15 +15,6 @@ export abstract class RefactorProvider {
 	): Refactor[];
 }
 
-export abstract class RefactorProviderBase extends RefactorProvider {
-	constructor(
-		protected readonly ts: typeof typescript,
-		protected readonly base: typescript.LanguageService
-	) {
-		super();
-	}
-}
-
 export interface RefactorFilter {
 	refactorName?: string;
 	actionName?: string;

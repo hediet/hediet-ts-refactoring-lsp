@@ -1,6 +1,7 @@
 import * as ts from "typescript/lib/tsserverlibrary";
-import { enableHotReload } from "@hediet/node-reload";
 
+/*
+import { enableHotReload } from "@hediet/node-reload";
 if (process.env.NODE_ENV === "development") {
 	require("C:\\Users\\henni\\AppData\\Local\\Yarn\\Data\\global\\node_modules\\easy-attach\\")(
 		{
@@ -13,6 +14,7 @@ if (process.env.NODE_ENV === "development") {
 
 	enableHotReload({ entryModule: module });
 }
+*/
 
 import { createLanguageServiceWithRefactorings } from "./Refactorings/createLanguageServiceWithRefactorings";
 

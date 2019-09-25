@@ -1,29 +1,32 @@
 import { hotClass, registerUpdateReconciler } from "@hediet/node-reload";
-import * as ts from "typescript";
+import * as typescript from "typescript";
 import { findChild as findInnerMostNodeAt } from "../utils";
-import {
-	Refactor,
-	RefactorAction,
-	RefactorProviderBase,
-} from "./RefactorProvider";
+import { Refactor, RefactorAction, RefactorProvider } from "./RefactorProvider";
 
 registerUpdateReconciler(module);
 
 @hotClass(module)
-export class DestructureExpression extends RefactorProviderBase {
+export class DestructureExpression extends RefactorProvider {
 	public static readonly refactoringName = "@hediet/ts-refactoring-lsp";
 	public static readonly actionName = "destructureExpression";
 
+	constructor(
+		protected readonly ts: typeof typescript,
+		protected readonly base: typescript.LanguageService
+	) {
+		super();
+	}
+
 	getRefactors(context: {
-		program: ts.Program;
-		range: ts.TextRange;
-		sourceFile: ts.SourceFile;
+		program: typescript.Program;
+		range: typescript.TextRange;
+		sourceFile: typescript.SourceFile;
 	}): Refactor[] {
 		let child = findInnerMostNodeAt(context.sourceFile, context.range.pos);
 		if (!child) {
 			return [];
 		}
-		const statement = findParent(child, ts.isExpressionStatement);
+		const statement = findParent(child, typescript.isExpressionStatement);
 		if (!statement) {
 			return [];
 		}
@@ -58,7 +61,7 @@ export class DestructureExpression extends RefactorProviderBase {
 	}
 
 	private getEdits(
-		sourceFile: ts.SourceFile,
+		sourceFile: typescript.SourceFile,
 		pos: number,
 		propNames: string[]
 	) {
@@ -83,11 +86,11 @@ export class DestructureExpression extends RefactorProviderBase {
 	}
 }
 
-function findParent<T extends ts.Node>(
-	item: ts.Node,
-	test: (item: ts.Node) => item is T
+function findParent<T extends typescript.Node>(
+	item: typescript.Node,
+	test: (item: typescript.Node) => item is T
 ): T | undefined {
-	let cur: ts.Node | undefined = item;
+	let cur: typescript.Node | undefined = item;
 	while (item) {
 		if (test(item)) {
 			return item;

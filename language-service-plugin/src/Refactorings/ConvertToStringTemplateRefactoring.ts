@@ -1,23 +1,30 @@
 import { hotClass, registerUpdateReconciler } from "@hediet/node-reload";
-import * as ts from "typescript";
+import * as typescript from "typescript";
 import { findChild as findInnerMostNodeAt } from "../utils";
 import {
-	RefactorProviderBase,
 	Refactor,
 	RefactorAction,
+	RefactorProvider,
 } from "./RefactorProvider";
 
 registerUpdateReconciler(module);
 
 @hotClass(module)
-export class ConvertToStringTemplateRefactoring extends RefactorProviderBase {
+export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 	public static readonly refactoringName = "@hediet/ts-refactoring-lsp";
 	public static readonly actionName = "convertToStringTemplate";
 
+	constructor(
+		protected readonly ts: typeof typescript,
+		protected readonly base: typescript.LanguageService
+	) {
+		super();
+	}
+
 	getRefactors(context: {
-		program: ts.Program;
-		range: ts.TextRange;
-		sourceFile: ts.SourceFile;
+		program: typescript.Program;
+		range: typescript.TextRange;
+		sourceFile: typescript.SourceFile;
 	}): Refactor[] {
 		let child = findInnerMostNodeAt(context.sourceFile, context.range.pos);
 		if (!child) {
@@ -46,7 +53,7 @@ export class ConvertToStringTemplateRefactoring extends RefactorProviderBase {
 		];
 	}
 
-	private getSuitableOuterMostParent(n: ts.Node): ts.Node {
+	private getSuitableOuterMostParent(n: typescript.Node): typescript.Node {
 		while (
 			n.parent &&
 			((this.ts.isBinaryExpression(n.parent) &&
@@ -60,13 +67,13 @@ export class ConvertToStringTemplateRefactoring extends RefactorProviderBase {
 	}
 
 	private getParts(
-		node: ts.Node
+		node: typescript.Node
 	):
 		| {
 				kind: "stringLiteralSequence";
-				parts: (ts.Node | { kind: "stringPart"; text: string })[];
+				parts: (typescript.Node | { kind: "stringPart"; text: string })[];
 		  }
-		| { kind: "node"; parts: [ts.Node] } {
+		| { kind: "node"; parts: [typescript.Node] } {
 		if (this.ts.isStringLiteral(node)) {
 			return {
 				kind: "stringLiteralSequence",
@@ -81,7 +88,7 @@ export class ConvertToStringTemplateRefactoring extends RefactorProviderBase {
 			return {
 				kind: "stringLiteralSequence",
 				parts: new Array<
-					ts.Node | { kind: "stringPart"; text: string }
+					typescript.Node | { kind: "stringPart"; text: string }
 				>().concat(p1.parts, p2.parts),
 			};
 		} else if (this.ts.isParenthesizedExpression(node)) {
@@ -92,9 +99,9 @@ export class ConvertToStringTemplateRefactoring extends RefactorProviderBase {
 	}
 
 	private getEdits(
-		sourceFile: ts.SourceFile,
-		node: ts.Node,
-		parts: (ts.Node | { kind: "stringPart"; text: string })[]
+		sourceFile: typescript.SourceFile,
+		node: typescript.Node,
+		parts: (typescript.Node | { kind: "stringPart"; text: string })[]
 	) {
 		const body = parts
 			.map(p => (p.kind === "stringPart" ? p.text : `\${${p.getText()}}`))

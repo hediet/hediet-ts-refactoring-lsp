@@ -10,10 +10,12 @@
 		"test": "mocha --require source-map-support/register dist/test/**/*.js"
 	},
 	"dependencies": {
-		"@hediet/node-reload": "^0.7.1",
+		"@hediet/node-reload": "^0.7.3",
 		"@hediet/typed-json-rpc": "^0.7.7",
 		"@hediet/typed-json-rpc-websocket": "^0.7.7",
 		"@hediet/typed-json-rpc-websocket-server": "^0.7.7",
+		"fast-glob": "^3.0.4",
+		"ts-node": "^8.4.1",
 		"typescript": "^3.5.3",
 		"ws": "^7.1.0"
 	},
