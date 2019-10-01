@@ -14,7 +14,11 @@ describe("destructureExpression", () => {
 	};
 
 	const decorateWithRefactorings = (base: ts.LanguageService) =>
-		createLanguageServiceWithRefactorings(ts, base);
+		createLanguageServiceWithRefactorings(
+			ts,
+			base,
+			new DestructureExpression(ts, base)
+		);
 
 	describe("Expect Refactoring", () => {
 		testSingleFileLanguageService(

@@ -4,6 +4,7 @@ import {
 	window,
 	Position,
 	Selection,
+	extensions,
 } from "vscode";
 import {
 	enableHotReload,
@@ -11,20 +12,29 @@ import {
 	hotRequireExportedFn,
 } from "@hediet/node-reload";
 import { Disposable, dispose } from "@hediet/std/disposable";
-import { RpcServerContract } from "@hediet/ts-lsp/dist/src/api";
+import {
+	RpcServerContract,
+	pluginId,
+	ConfigType,
+} from "@hediet/ts-lsp/dist/src/api";
 import { startInterval } from "@hediet/std/timer";
 import { Barrier } from "@hediet/std/synchronization";
 import { WebSocketStream } from "@hediet/typed-json-rpc-websocket";
+import { Config } from "./Config";
 
 if (false) {
 	enableHotReload({ entryModule: module });
 }
 registerUpdateReconciler(module);
 
+const typeScriptExtensionId = "vscode.typescript-language-features";
+
 export class Extension {
 	public readonly dispose = Disposable.fn();
 
 	private connection = new Connection();
+
+	private config = this.dispose.track(new Config());
 
 	constructor() {
 		this.dispose.track(
@@ -56,6 +66,41 @@ export class Extension {
 				}
 			)
 		);
+
+		this.initialize();
+	}
+
+	async initialize(): Promise<void> {
+		const extension = extensions.getExtension(typeScriptExtensionId);
+		if (!extension) {
+			return;
+		}
+
+		await extension.activate();
+		if (!extension.exports || !extension.exports.getAPI) {
+			return;
+		}
+		const api = extension.exports.getAPI(0) as {
+			configurePlugin(id: string, config: ConfigType): void;
+		};
+		if (!api) {
+			return;
+		}
+
+		const updateConfig = () => {
+			const c = this.config.config;
+			api.configurePlugin(pluginId, {
+				customRefactorings: c.customRefactoringsEnabled
+					? {
+							dir: c.customRefactoringsDir,
+							pattern: c.customRefactoringsPattern,
+					  }
+					: undefined,
+			});
+		};
+
+		this.config.onChange.sub(() => updateConfig());
+		updateConfig();
 	}
 }
 

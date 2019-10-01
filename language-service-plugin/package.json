@@ -17,7 +17,9 @@
 		"fast-glob": "^3.0.4",
 		"ts-node": "^8.4.1",
 		"typescript": "^3.5.3",
-		"ws": "^7.1.0"
+		"ws": "^7.1.0",
+		"io-ts": "^2.0.1",
+		"fp-ts": "^2.0.5"
 	},
 	"devDependencies": {
 		"@types/assert": "^1.4.2",

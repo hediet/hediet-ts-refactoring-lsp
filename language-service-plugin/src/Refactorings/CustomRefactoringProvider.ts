@@ -54,19 +54,17 @@ export class CustomRefactoringProvider extends RefactorProvider {
 		const refactorProviders = new Array<RefactorProvider>();
 		for (const file of files) {
 			try {
-				const content = require(join(this.dir, file));
+				const fileName = join(this.dir, file);
+				const content = require(fileName);
 				const Clazz = content.default;
-
 				const refactor = new Clazz(
 					this.ts,
 					this.base
 				) as RefactorProvider;
 				refactorProviders.push(refactor);
 			} catch (e) {
-				require("C:\\Users\\Henning\\AppData\\Local\\Yarn\\Data\\global\\node_modules\\easy-attach\\")(
-					{ debugPort: "preconfigured" }
-				);
 				debugger;
+				console.error(e);
 			}
 		}
 

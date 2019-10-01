@@ -1,24 +1,11 @@
 import * as ts from "typescript/lib/tsserverlibrary";
-import { ConvertToStringTemplateRefactoring } from "./ConvertToStringTemplateRefactoring";
-import { RefactorProvider, ComposedRefactorProvider } from "./RefactorProvider";
-import { DestructureExpression } from "./DestructureExpression";
-import { CustomRefactoringProvider } from "./CustomRefactoringProvider";
+import { RefactorProvider } from "./RefactorProvider";
 
 export function createLanguageServiceWithRefactorings(
 	typescript: typeof ts,
-	base: ts.LanguageService
+	base: ts.LanguageService,
+	refactorProvider: RefactorProvider
 ): ts.LanguageService {
-	const refactoringProvider: RefactorProvider = new ComposedRefactorProvider([
-		new ConvertToStringTemplateRefactoring(typescript, base),
-		new DestructureExpression(typescript, base),
-		new CustomRefactoringProvider(
-			typescript,
-			base,
-			"C:\\Users\\Henning\\Desktop\\playground\\my-refactorings\\src\\",
-			"*.refactoring.ts"
-		),
-	]);
-
 	function getContext(
 		fileName: string
 	): { program: ts.Program; sourceFile: ts.SourceFile } | undefined {
@@ -55,7 +42,7 @@ export function createLanguageServiceWithRefactorings(
 					end: positionOrRange,
 				};
 			}
-			const refactorings = refactoringProvider.getRefactors(
+			const refactorings = refactorProvider.getRefactors(
 				{
 					...context,
 					range: positionOrRange,
@@ -95,7 +82,7 @@ export function createLanguageServiceWithRefactorings(
 					end: positionOrRange,
 				};
 			}
-			const refactorings = refactoringProvider.getRefactors(
+			const refactorings = refactorProvider.getRefactors(
 				{
 					...context,
 					range: positionOrRange,

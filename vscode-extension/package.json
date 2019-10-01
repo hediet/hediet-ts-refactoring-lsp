@@ -1,5 +1,6 @@
 {
 	"name": "hediet-ts-lsp",
+	"private": true,
 	"displayName": "Hediets TypeScript Language Service Plugin",
 	"description": "This is a VS Code Extension for refactorings and code actions that I had time and fun to program.",
 	"version": "0.2.5",
@@ -38,7 +39,24 @@
 				"title": "Smarter Select",
 				"command": "hediet-ts-lsp.smarter-select"
 			}
-		]
+		],
+		"configuration": {
+			"title": "Hediet Typescript Language Server Plugin",
+			"properties": {
+				"hediet.ts-lsp.customRefactoringsEnabled": {
+					"type": "boolean",
+					"default": false
+				},
+				"hediet.ts-lsp.customRefactoringsDir": {
+					"type": "string",
+					"default": ""
+				},
+				"hediet.ts-lsp.customRefactoringsPattern": {
+					"type": "string",
+					"default": ""
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "yarn run build",

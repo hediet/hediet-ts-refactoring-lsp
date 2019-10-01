@@ -6,7 +6,6 @@ import {
 import { ConvertToStringTemplateRefactoring } from "../src/Refactorings/ConvertToStringTemplateRefactoring";
 import { createLanguageServiceWithRefactorings } from "../src/Refactorings/createLanguageServiceWithRefactorings";
 import ts = require("typescript/lib/tsserverlibrary");
-import { DestructureExpression } from "../src/Refactorings/DestructureExpression";
 
 describe("convertToStringTemplate", () => {
 	const action = {
@@ -15,7 +14,11 @@ describe("convertToStringTemplate", () => {
 	};
 
 	const decorateWithRefactorings = (base: ts.LanguageService) =>
-		createLanguageServiceWithRefactorings(ts, base);
+		createLanguageServiceWithRefactorings(
+			ts,
+			base,
+			new ConvertToStringTemplateRefactoring(ts, base)
+		);
 
 	describe("Expect Refactoring", () => {
 		testSingleFileLanguageService(
