@@ -3,7 +3,7 @@
 	"private": true,
 	"displayName": "Hediets TypeScript Language Service Plugin",
 	"description": "This is a VS Code Extension for refactorings and code actions that I had time and fun to program.",
-	"version": "0.2.5",
+	"version": "0.3.0",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.36.0"
@@ -67,7 +67,7 @@
 	"dependencies": {
 		"@hediet/node-reload": "^0.7.3",
 		"@hediet/std": "^0.6.0",
-		"@hediet/ts-lsp": "0.1.3",
+		"@hediet/ts-lsp": "0.2.0",
 		"@hediet/typed-json-rpc": "^0.7.7",
 		"@hediet/typed-json-rpc-websocket": "^0.7.7",
 		"ws": "^7.1.2"
