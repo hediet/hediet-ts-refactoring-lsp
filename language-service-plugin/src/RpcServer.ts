@@ -1,18 +1,20 @@
-import { contract, requestContract } from "@hediet/typed-json-rpc";
+import { contract, requestContract, types } from "@hediet/typed-json-rpc";
 import {
 	startWebSocketServer,
 	WebSocketServer,
 } from "@hediet/typed-json-rpc-websocket-server";
-import { string, number, union, literal, type } from "io-ts";
 import * as ts from "typescript/lib/tsserverlibrary";
 import { hotClass, registerUpdateReconciler } from "@hediet/node-reload";
 
 export const RpcServerContract = contract({
 	server: {
 		getRangeOfParentListItem: requestContract({
-			params: type({ fileName: string, position: number }),
-			result: type({ start: number, end: number }),
-			error: type({ kind: literal("FileNotFound") }),
+			params: types.type({
+				fileName: types.string,
+				position: types.number,
+			}),
+			result: types.type({ start: types.number, end: types.number }),
+			error: types.type({ kind: types.literal("FileNotFound") }),
 		}),
 	},
 	client: {},

@@ -1,12 +1,10 @@
 # Hediet TypeScript Refactorings
 
-This is a VS Code Extension for refactorings that I had time and fun to program.
-Feel free to use them too.
+[![](https://img.shields.io/twitter/follow/hediet_dev.svg?style=social)](https://twitter.com/intent/follow?screen_name=hediet_dev)
 
-## Supported Refactorings
+See [README.md of the extension](./vscode-extension/README.md).
 
--   Convert string concatenation to string template
+You can get the extension [here](https://marketplace.visualstudio.com/items?itemName=hediet.hediet-ts-lsp).
 
-## Supported Actions
-
--   Better Smart Select. Selects the next top node that is child of an array
+The refactorings are also useable without the VS Code plugin - you can use the [language service plugin](./language-service-plugin) standalone.
+Just install `@hediet/ts-lsp` and add it as plugin to your `tsconfig.json`.

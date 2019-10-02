@@ -30,6 +30,7 @@ import { DestructureExpression } from "./Refactorings/DestructureExpression";
 import { CustomRefactoringProvider } from "./Refactorings/CustomRefactoringProvider";
 import { ThrowReporter } from "io-ts/lib/ThrowReporter";
 import { Logger } from "./Logger";
+import { createLanguageServiceWithRpcServer } from "./createLanguageServiceWithRpcServer";
 
 export = function init(modules: { typescript: typeof ts }) {
 	let logger: Logger | undefined;
@@ -85,6 +86,13 @@ export = function init(modules: { typescript: typeof ts }) {
 				base,
 				refactoringProvider
 			);
+
+			decorated = createLanguageServiceWithRpcServer(
+				modules.typescript,
+				base,
+				info.project.projectService
+			);
+
 			return decorated;
 		},
 		onConfigurationChanged(config: any) {
