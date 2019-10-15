@@ -1,11 +1,11 @@
 import { hotClass, registerUpdateReconciler } from "@hediet/node-reload";
 import * as typescript from "typescript";
-import { findChild as findInnerMostNodeAt } from "../utils";
 import {
 	Refactor,
 	RefactorAction,
 	RefactorProvider,
-} from "./RefactorProvider";
+	findInnerMostNodeAt,
+} from "@hediet/ts-api-extras";
 
 registerUpdateReconciler(module);
 
@@ -71,7 +71,9 @@ export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 	):
 		| {
 				kind: "stringLiteralSequence";
-				parts: (typescript.Node | { kind: "stringPart"; text: string })[];
+				parts: (
+					| typescript.Node
+					| { kind: "stringPart"; text: string })[];
 		  }
 		| { kind: "node"; parts: [typescript.Node] } {
 		if (this.ts.isStringLiteral(node)) {

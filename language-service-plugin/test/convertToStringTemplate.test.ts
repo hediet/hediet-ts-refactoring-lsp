@@ -1,10 +1,11 @@
+import "./setup";
 import {
 	testSingleFileLanguageService,
 	expectRefactoring,
 	expectNoRefactoring,
-} from "./utils";
+} from "@hediet/ts-api-extras/dist/src/test-utils";
 import { ConvertToStringTemplateRefactoring } from "../src/Refactorings/ConvertToStringTemplateRefactoring";
-import { createLanguageServiceWithRefactorings } from "../src/Refactorings/createLanguageServiceWithRefactorings";
+import { createLanguageServiceWithRefactorings } from "@hediet/ts-api-extras";
 import ts = require("typescript/lib/tsserverlibrary");
 
 describe("convertToStringTemplate", () => {

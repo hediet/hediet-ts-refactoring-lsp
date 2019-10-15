@@ -1,20 +1,20 @@
 import * as ts from "typescript";
 
-export class MockLanguageServiceHost implements ts.LanguageServiceHost {
+export class VirtualLanguageServiceHost implements ts.LanguageServiceHost {
 	constructor(
 		private readonly files: Map<string, string>,
 		private readonly compilationSettings: ts.CompilerOptions
 	) {}
 
-	getScriptFileNames(): string[] {
+	public getScriptFileNames(): string[] {
 		return [...this.files.keys()];
 	}
 
-	getScriptVersion(fileName: string): string {
-		return ""; // our files don't change
+	public getScriptVersion(fileName: string): string {
+		return "1.0"; // our files don't change
 	}
 
-	getScriptSnapshot(fileName: string): ts.IScriptSnapshot | undefined {
+	public getScriptSnapshot(fileName: string): ts.IScriptSnapshot | undefined {
 		const content = this.files.get(fileName);
 		if (!content) {
 			return undefined;
@@ -27,13 +27,15 @@ export class MockLanguageServiceHost implements ts.LanguageServiceHost {
 		};
 	}
 
-	getCompilationSettings(): ts.CompilerOptions {
+	public getCompilationSettings(): ts.CompilerOptions {
 		return this.compilationSettings;
 	}
-	getCurrentDirectory(): string {
+
+	public getCurrentDirectory(): string {
 		return "/";
 	}
-	getDefaultLibFileName(options: ts.CompilerOptions): string {
+
+	public getDefaultLibFileName(options: ts.CompilerOptions): string {
 		return ts.getDefaultLibFileName(options);
 	}
 }

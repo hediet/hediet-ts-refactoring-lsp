@@ -106,7 +106,7 @@ type UnionToIntersection<U> = { x: U } extends { x: never }
 export abstract class Pattern<
 	TValue,
 	TOut = TValue,
-	TVars extends Vars = Vars
+	TVars /*extends Vars*/ = Vars
 > {
 	public static genCode(node: ts.Node) {
 		function findKey(value: any, object: any): string | null {
@@ -204,7 +204,6 @@ export abstract class Pattern<
 	): Pattern<
 		ts.Node,
 		ts.Node,
-		// @ts-ignore
 		UnionToIntersection<TProps[keyof TProps]["TVars"]>
 	> {
 		return new NodePattern(kind, properties) as any;

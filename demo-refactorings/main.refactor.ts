@@ -1,15 +1,15 @@
 import {
 	RefactorProviderBase,
-	typescript,
 	RefactorFilter,
 	RefactorCollector,
-	findChild,
-} from "@hediet/ts-lsp/dist/src/api";
+	findInnerMostNodeAt,
+} from "@hediet/ts-api-extras";
 import {
 	hotClass,
 	enableHotReload,
 	registerUpdateReconciler,
 } from "@hediet/node-reload";
+import * as typescript from "typescript";
 
 enableHotReload({ entryModule: module });
 
@@ -30,7 +30,7 @@ export default class RefactorProvider extends RefactorProviderBase {
 			{ debugPort: "preconfigured" }
 		);
 
-		const n = findChild(context.sourceFile, context.range.pos);
+		const n = findInnerMostNodeAt(context.sourceFile, context.range.pos);
 
 		debugger;
 	}

@@ -1,7 +1,11 @@
 import { hotClass, registerUpdateReconciler } from "@hediet/node-reload";
 import * as typescript from "typescript";
-import { findChild as findInnerMostNodeAt } from "../utils";
-import { Refactor, RefactorAction, RefactorProvider } from "./RefactorProvider";
+import {
+	findInnerMostNodeAt,
+	Refactor,
+	RefactorAction,
+	RefactorProvider,
+} from "@hediet/ts-api-extras";
 
 registerUpdateReconciler(module);
 

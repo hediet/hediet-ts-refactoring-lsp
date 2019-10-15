@@ -1,9 +1,10 @@
+import "./setup";
 import {
 	testSingleFileLanguageService,
 	expectRefactoring,
 	expectNoRefactoring,
-} from "./utils";
-import { createLanguageServiceWithRefactorings } from "../src/Refactorings/createLanguageServiceWithRefactorings";
+} from "@hediet/ts-api-extras/dist/src/test-utils";
+import { createLanguageServiceWithRefactorings } from "@hediet/ts-api-extras";
 import ts = require("typescript/lib/tsserverlibrary");
 import { DestructureExpression } from "../src/Refactorings/DestructureExpression";
 

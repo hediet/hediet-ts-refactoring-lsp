@@ -1,4 +1,6 @@
-export function findChild(
+import * as ts from "typescript";
+
+export function findInnerMostNodeAt(
 	node: ts.Node,
 	position: number
 ): ts.Node | undefined {
@@ -8,14 +10,14 @@ export function findChild(
 	let result: ts.Node = node;
 	node.forEachChild(
 		node => {
-			const c = findChild(node, position);
+			const c = findInnerMostNodeAt(node, position);
 			if (c) {
 				result = c;
 			}
 		},
 		arr => {
 			for (const item of arr) {
-				const c = findChild(item, position);
+				const c = findInnerMostNodeAt(item, position);
 				if (c) {
 					result = c;
 				}

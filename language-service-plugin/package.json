@@ -11,6 +11,7 @@
 		"test": "mocha --require source-map-support/register dist/test/**/*.js"
 	},
 	"dependencies": {
+		"@hediet/ts-api-extras": "*",
 		"@hediet/node-reload": "^0.7.3",
 		"@hediet/typed-json-rpc": "^0.7.7",
 		"@hediet/typed-json-rpc-websocket": "^0.7.7",

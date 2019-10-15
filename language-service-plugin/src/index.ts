@@ -16,15 +16,12 @@ if (process.env.NODE_ENV === "development") {
 }
 */
 
-import { createLanguageServiceWithRefactorings } from "./Refactorings/createLanguageServiceWithRefactorings";
 import {
+	createLanguageServiceWithRefactorings,
 	RefactorProvider,
 	ComposedRefactorProvider,
-	typescript,
-	pluginId,
-	configType,
-	ConfigType,
-} from "./api";
+} from "@hediet/ts-api-extras";
+import { typescript, pluginId, configType, ConfigType } from "./api";
 import { ConvertToStringTemplateRefactoring } from "./Refactorings/ConvertToStringTemplateRefactoring";
 import { DestructureExpression } from "./Refactorings/DestructureExpression";
 import { CustomRefactoringProvider } from "./Refactorings/CustomRefactoringProvider";

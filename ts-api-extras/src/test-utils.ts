@@ -1,43 +1,8 @@
-process.env.NODE_ENV = "development";
-import { MockLanguageServiceHost } from "./MockLanguageServiceHost";
 import ts = require("typescript/lib/tsserverlibrary");
 import { expect } from "chai";
+import { VirtualLanguageServiceHost } from "./VirtualLanguageServiceHost";
 
-export function stripMarkers(
-	src: string
-): { stripped: string; markers: number[] } {
-	let stripped = "";
-	const markers = new Array<number>();
-	let i = 0;
-	let first = true;
-	for (const part of src.split("|")) {
-		if (first) {
-			first = false;
-		} else {
-			markers.push(i);
-		}
-		stripped += part;
-		i += stripped.length;
-	}
-	return {
-		stripped,
-		markers,
-	};
-}
-
-export function applyTextChange(str: string, changes: ts.TextChange[]): string {
-	let result = str;
-	const c = changes.sort((a, b) => a.span.start - b.span.start);
-	for (const x of c) {
-		result =
-			result.substr(0, x.span.start) +
-			x.newText +
-			result.substr(x.span.start + x.span.length);
-	}
-	return result;
-}
-
-type TestFn = (
+export type TestFn = (
 	service: ts.LanguageService,
 	markers: number[],
 	mainFile: { name: string; content: string }
@@ -58,7 +23,7 @@ export function testSingleFileLanguageService(
 		const files = new Map<string, string>([
 			[mainFile.name, mainFile.content],
 		]);
-		const serviceHost = new MockLanguageServiceHost(files, {});
+		const serviceHost = new VirtualLanguageServiceHost(files, {});
 		const baseService = ts.createLanguageService(
 			serviceHost,
 			ts.createDocumentRegistry()
@@ -123,3 +88,35 @@ export const expectNoRefactoring = (refactoringName: string): TestFn => (
 	const refactoring = info.find(i => i.name == refactoringName)!;
 	expect(refactoring).to.be.undefined;
 };
+
+function stripMarkers(src: string): { stripped: string; markers: number[] } {
+	let stripped = "";
+	const markers = new Array<number>();
+	let i = 0;
+	let first = true;
+	for (const part of src.split("|")) {
+		if (first) {
+			first = false;
+		} else {
+			markers.push(i);
+		}
+		stripped += part;
+		i += stripped.length;
+	}
+	return {
+		stripped,
+		markers,
+	};
+}
+
+function applyTextChange(str: string, changes: ts.TextChange[]): string {
+	let result = str;
+	const c = changes.sort((a, b) => a.span.start - b.span.start);
+	for (const x of c) {
+		result =
+			result.substr(0, x.span.start) +
+			x.newText +
+			result.substr(x.span.start + x.span.length);
+	}
+	return result;
+}

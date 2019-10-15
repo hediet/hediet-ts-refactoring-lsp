@@ -1,0 +1,33 @@
+{
+	"name": "@hediet/ts-api-extras",
+	"description": "",
+	"version": "0.1.0",
+	"main": "dist/src/index.js",
+	"types": "dist/src/index.d.ts",
+	"license": "MIT",
+	"scripts": {
+		"dev": "tsc --watch",
+		"build": "tsc",
+		"test": "mocha --require source-map-support/register dist/test/**/*.js"
+	},
+	"dependencies": {
+		"typescript": "^3.5.3"
+	},
+	"devDependencies": {
+		"@types/assert": "^1.4.2",
+		"@types/chai": "^4.1.7",
+		"@types/mocha": "^5.2.7",
+		"@types/sinon": "^7.0.13",
+		"chai": "^4.2.0",
+		"mocha": "^6.1.4",
+		"sinon": "^7.3.2",
+		"source-map-support": "^0.5.13"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"mocha": {
+		"spec": "dist/test/**/*.test.js"
+	}
+}

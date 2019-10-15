@@ -3,7 +3,7 @@ import {
 	Refactor,
 	RefactorProvider,
 	ComposedRefactorProvider,
-} from "./RefactorProvider";
+} from "@hediet/ts-api-extras";
 import * as typescript from "typescript";
 import * as tsNode from "ts-node";
 import * as fg from "fast-glob";

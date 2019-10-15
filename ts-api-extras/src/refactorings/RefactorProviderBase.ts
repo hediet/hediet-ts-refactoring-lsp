@@ -5,46 +5,7 @@ import {
 	RefactorAction,
 	RefactorFilter,
 } from "./RefactorProvider";
-
-export class EditBuilder {
-	public readonly edits = new Array<typescript.FileTextChanges>();
-	public getEdits(): typescript.RefactorEditInfo {
-		return { edits: this.edits };
-	}
-
-	public replace(node: ts.Node, newText: string): void {
-		this.edits.push({
-			fileName: node.getSourceFile().fileName,
-			isNewFile: false,
-			textChanges: [
-				{
-					span: {
-						start: node.getStart(),
-						length: node.getWidth(),
-					},
-					newText: newText,
-				},
-			],
-		});
-	}
-}
-
-export interface RefactorActionWithEditBuilder {
-	name: string;
-	description: string;
-	collectEdits(
-		editBuilder: EditBuilder,
-		formatOptions: typescript.FormatCodeSettings,
-		preferences: typescript.UserPreferences | undefined
-	): void;
-}
-
-export interface RefactorCollector {
-	addRefactor(refactor: Refactor): void;
-	addRefactorAction(
-		refactorAction: RefactorAction | RefactorActionWithEditBuilder
-	): void;
-}
+import { EditBuilder } from "../EditBuilder";
 
 export abstract class RefactorProviderBase extends RefactorProvider {
 	constructor(
@@ -98,5 +59,22 @@ export abstract class RefactorProviderBase extends RefactorProvider {
 		},
 		filter: RefactorFilter,
 		collector: RefactorCollector
+	): void;
+}
+
+export interface RefactorActionWithEditBuilder {
+	name: string;
+	description: string;
+	collectEdits(
+		editBuilder: EditBuilder,
+		formatOptions: typescript.FormatCodeSettings,
+		preferences: typescript.UserPreferences | undefined
+	): void;
+}
+
+export interface RefactorCollector {
+	addRefactor(refactor: Refactor): void;
+	addRefactorAction(
+		refactorAction: RefactorAction | RefactorActionWithEditBuilder
 	): void;
 }
