@@ -89,7 +89,7 @@ export = function init(modules: { typescript: typeof ts }) {
 
 			decorated = createLanguageServiceWithRpcServer(
 				modules.typescript,
-				base,
+				decorated,
 				info.project.projectService
 			);
 
