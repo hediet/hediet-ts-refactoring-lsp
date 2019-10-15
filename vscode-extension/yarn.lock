@@ -55,12 +55,20 @@
     mobx "^5.10.0"
     sinon "^7.2.7"
 
-"@hediet/ts-lsp@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@hediet/ts-lsp/-/ts-lsp-0.2.0.tgz#e3b1fa1af26db1c053fc5458f097523c66805c1d"
-  integrity sha512-OP0/7NQbQbP2MvZTr1T/kbjTUHFmMauyxitAkxNHZgTOiZkC0hen1lyqBrRbzv5TceEK3+yFjoq5e0+5d5OxSg==
+"@hediet/ts-api-extras@*":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@hediet/ts-api-extras/-/ts-api-extras-0.1.0.tgz#b766f6efd647a175f35f7be028a6dee6eb1ffb28"
+  integrity sha512-A/gVSb6frzEjjX2HpeRq0Vz13uryvrb/67KQzEhu7FSlqtdzG+QCnxQis5QXf1JHS6YCtAE3wmxB8ehHif2/Gg==
+  dependencies:
+    typescript "^3.5.3"
+
+"@hediet/ts-lsp@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@hediet/ts-lsp/-/ts-lsp-0.2.1.tgz#977cf1a6e05d8508a7d478876de265506bad9145"
+  integrity sha512-Am9R2b6+wjeaZId/zgFDSZgfh3FRfvFtV2xUVidzCc1Qi9slWthpE2x9hdEIJl8cppdI0wo9DaXqsqb+8BRcmQ==
   dependencies:
     "@hediet/node-reload" "^0.7.3"
+    "@hediet/ts-api-extras" "*"
     "@hediet/typed-json-rpc" "^0.7.7"
     "@hediet/typed-json-rpc-websocket" "^0.7.7"
     "@hediet/typed-json-rpc-websocket-server" "^0.7.7"
