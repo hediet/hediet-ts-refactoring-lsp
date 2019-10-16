@@ -6,6 +6,22 @@ export class EditBuilder {
 		return { edits: this.edits };
 	}
 
+	public insert(pos: number, sf: typescript.SourceFile, text: string): void {
+		this.edits.push({
+			fileName: sf.fileName,
+			isNewFile: false,
+			textChanges: [
+				{
+					span: {
+						start: pos,
+						length: 0,
+					},
+					newText: text,
+				},
+			],
+		});
+	}
+
 	public replace(node: typescript.Node, newText: string): void {
 		this.edits.push({
 			fileName: node.getSourceFile().fileName,
