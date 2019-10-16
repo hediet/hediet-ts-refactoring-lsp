@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import * as typescript from "typescript";
 
 function isNode(obj: unknown): obj is ts.Node {
 	return !!(typeof obj === "object" && obj && "pos" in obj);
@@ -103,79 +103,175 @@ type UnionToIntersection<U> = { x: U } extends { x: never }
 	? I
 	: never;
 
+export function PatternFactory(ts: typeof typescript) {
+	return {
+		genCode(node: ts.Node) {
+			function findKey(value: any, object: any): string | null {
+				for (var key in object) {
+					if (key.startsWith("_")) continue;
+
+					var member = object[key];
+					if (member === value) return key;
+
+					if (Array.isArray(member) && member.indexOf(value) !== -1) {
+						return key;
+					}
+				}
+
+				return null;
+			}
+
+			function getPattern(node: ts.Node): string {
+				const name = ts.SyntaxKind[node.kind];
+
+				if (ts.isIdentifier(node)) {
+					return `Pattern.identifier(${JSON.stringify(node.text)})`;
+				}
+
+				const children = node
+					.getChildren()
+					.map((childNode, idx) => {
+						let parentPropertyName = findKey(childNode, node) || "";
+						if (childNode.kind == ts.SyntaxKind.SyntaxList) {
+							childNode.getChildren().some(c => {
+								parentPropertyName = findKey(c, node) || "";
+								return !!parentPropertyName;
+							});
+
+							if (childNode.getChildren().length === 0)
+								return null!;
+						}
+
+						if (node.kind === ts.SyntaxKind.SyntaxList) {
+							parentPropertyName = "" + idx;
+						}
+						if (parentPropertyName === "") {
+							return null;
+						}
+						return {
+							parentPropertyName,
+							pattern: getPattern(childNode),
+						};
+					})
+					.filter(c => c !== null);
+
+				if (node.kind === ts.SyntaxKind.SyntaxList) {
+					return `Pattern.list([ ${children
+						.map(c => `${c!.pattern}`)
+						.join(", ")} ])`;
+				}
+
+				return `Pattern.node(ts.SyntaxKind.${name}, { ${children
+					.map(
+						c =>
+							`${JSON.stringify(c!.parentPropertyName)}: ${
+								c!.pattern
+							}`
+					)
+					.join(", ")} })`;
+			}
+
+			return getPattern(node);
+		},
+
+		node: <TProps extends Record<string, Pattern<ts.Node, any, any>> = {}>(
+			kind: ts.SyntaxKind,
+			properties: TProps
+		): Pattern<
+			ts.Node,
+			ts.Node,
+			UnionToIntersection<TProps[keyof TProps]["TVars"]>
+		> => {
+			return new NodePattern(kind, properties) as any;
+		},
+
+		identifier(value?: string): Pattern<ts.Node, ts.Identifier> {
+			const val = value;
+			return val
+				? new PredicatePattern(
+						n => ts.isIdentifier(n) && n.getText() === val
+				  )
+				: new PredicatePattern(n => ts.isIdentifier(n));
+		},
+
+		parent<TValue extends ts.Node, TOut, TVars>(
+			parentPattern: Pattern<ts.Node, TOut, TVars>
+		): Pattern<TValue, TOut, TVars> {
+			return new FnPattern(node => {
+				return parentPattern.match(node.parent);
+			});
+		},
+
+		any<T>(): Pattern<T, T> {
+			return new PredicatePattern(n => true);
+		},
+
+		test<T>(fn: (n: T) => boolean): Pattern<T, T> {
+			return new PredicatePattern(n => fn(n));
+		},
+
+		ofType<T>(type: { new (): T } | Function): Pattern<T, T> {
+			return new PredicatePattern(n => n instanceof type);
+		},
+
+		list<TVars extends Vars = {}, TVarsRest extends Vars = {}>(
+			patterns: Pattern<ts.Node, any, TVars>[],
+			options?: {
+				rest?: {
+					pattern: Pattern<ts.Node[], unknown, TVarsRest>;
+					mode: "suffix";
+				};
+			}
+		): Pattern<unknown, ts.Node[], TVars & TVarsRest> {
+			return new FnPattern(node => {
+				if (!Array.isArray(node)) {
+					return false;
+				}
+
+				const c = node as ts.Node[];
+
+				if (options && options.rest) {
+					if (c.length < patterns.length) {
+						return false;
+					}
+				} else {
+					if (c.length !== patterns.length) {
+						return false;
+					}
+				}
+
+				const match = new MatchImpl<ts.Node[], TVars & TVarsRest>(node);
+				for (let idx = 0; idx < patterns.length; idx++) {
+					const node = c[idx];
+					const pattern = patterns[idx];
+					const m = pattern.match(node);
+					if (!m) {
+						return false;
+					}
+					match.addSubMatch(m as any);
+				}
+
+				if (options && options.rest) {
+					const m = options.rest.pattern.match(
+						c.slice(patterns.length)
+					);
+					if (!m) {
+						return false;
+					}
+					match.addSubMatch(m as any);
+				}
+
+				return match;
+			});
+		},
+	};
+}
+
 export abstract class Pattern<
 	TValue,
 	TOut = TValue,
 	TVars /*extends Vars*/ = Vars
 > {
-	public static genCode(node: ts.Node) {
-		function findKey(value: any, object: any): string | null {
-			for (var key in object) {
-				if (key.startsWith("_")) continue;
-
-				var member = object[key];
-				if (member === value) return key;
-
-				if (Array.isArray(member) && member.indexOf(value) !== -1) {
-					return key;
-				}
-			}
-
-			return null;
-		}
-
-		function getPattern(node: ts.Node): string {
-			const name = ts.SyntaxKind[node.kind];
-
-			if (ts.isIdentifier(node)) {
-				return `Pattern.identifier(${JSON.stringify(node.text)})`;
-			}
-
-			const children = node
-				.getChildren()
-				.map((childNode, idx) => {
-					let parentPropertyName = findKey(childNode, node) || "";
-					if (childNode.kind == ts.SyntaxKind.SyntaxList) {
-						childNode.getChildren().some(c => {
-							parentPropertyName = findKey(c, node) || "";
-							return !!parentPropertyName;
-						});
-
-						if (childNode.getChildren().length === 0) return null!;
-					}
-
-					if (node.kind === ts.SyntaxKind.SyntaxList) {
-						parentPropertyName = "" + idx;
-					}
-					if (parentPropertyName === "") {
-						return null;
-					}
-					return {
-						parentPropertyName,
-						pattern: getPattern(childNode),
-					};
-				})
-				.filter(c => c !== null);
-
-			if (node.kind === ts.SyntaxKind.SyntaxList) {
-				return `Pattern.list([ ${children
-					.map(c => `${c!.pattern}`)
-					.join(", ")} ])`;
-			}
-
-			return `Pattern.node(ts.SyntaxKind.${name}, { ${children
-				.map(
-					c =>
-						`${JSON.stringify(c!.parentPropertyName)}: ${
-							c!.pattern
-						}`
-				)
-				.join(", ")} })`;
-		}
-
-		return getPattern(node);
-	}
-
 	public findAllMatches(
 		this: Pattern<ts.Node, TOut, TVars>,
 		ast: ts.Node
@@ -196,91 +292,8 @@ export abstract class Pattern<
 		return result;
 	}
 
-	public static node<
-		TProps extends Record<string, Pattern<ts.Node, any, any>> = {}
-	>(
-		kind: ts.SyntaxKind,
-		properties: TProps
-	): Pattern<
-		ts.Node,
-		ts.Node,
-		UnionToIntersection<TProps[keyof TProps]["TVars"]>
-	> {
-		return new NodePattern(kind, properties) as any;
-	}
-
-	public static identifier(value?: string): Pattern<ts.Node, ts.Identifier> {
-		const val = value;
-		return val
-			? new PredicatePattern(
-					n => ts.isIdentifier(n) && n.getText() === val
-			  )
-			: new PredicatePattern(n => ts.isIdentifier(n));
-	}
-
-	public static any<T>(): Pattern<T, T> {
-		return new PredicatePattern(n => true);
-	}
-
-	public static test<T>(fn: (n: T) => boolean): Pattern<T, T> {
-		return new PredicatePattern(n => fn(n));
-	}
-
-	public static ofType<T>(type: { new (): T } | Function): Pattern<T, T> {
-		return new PredicatePattern(n => n instanceof type);
-	}
-
 	public mustBe<T>(): Pattern<TValue, T, TVars> {
 		return this as any;
-	}
-
-	public static list<TVars extends Vars = {}, TVarsRest extends Vars = {}>(
-		patterns: Pattern<ts.Node, any, TVars>[],
-		options?: {
-			rest?: {
-				pattern: Pattern<ts.Node[], unknown, TVarsRest>;
-				mode: "suffix";
-			};
-		}
-	): Pattern<unknown, ts.Node[], TVars & TVarsRest> {
-		return new FnPattern(node => {
-			if (!Array.isArray(node)) {
-				return false;
-			}
-
-			const c = node as ts.Node[];
-
-			if (options && options.rest) {
-				if (c.length < patterns.length) {
-					return false;
-				}
-			} else {
-				if (c.length !== patterns.length) {
-					return false;
-				}
-			}
-
-			const match = new MatchImpl<ts.Node[], TVars & TVarsRest>(node);
-			for (let idx = 0; idx < patterns.length; idx++) {
-				const node = c[idx];
-				const pattern = patterns[idx];
-				const m = pattern.match(node);
-				if (!m) {
-					return false;
-				}
-				match.addSubMatch(m as any);
-			}
-
-			if (options && options.rest) {
-				const m = options.rest.pattern.match(c.slice(patterns.length));
-				if (!m) {
-					return false;
-				}
-				match.addSubMatch(m as any);
-			}
-
-			return match;
-		});
 	}
 
 	public get TVars(): TVars {
