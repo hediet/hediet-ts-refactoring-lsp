@@ -70,7 +70,7 @@
 		"@hediet/ts-lsp": "^0.2.1",
 		"@hediet/typed-json-rpc": "^0.7.7",
 		"@hediet/typed-json-rpc-websocket": "^0.7.7",
-		"ws": "^7.1.2"
+		"ws": "^7.4.6"
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",
