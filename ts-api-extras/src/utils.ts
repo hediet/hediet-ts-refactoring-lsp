@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import type * as ts from "typescript";
 
 export function findInnerMostNodeAt(
 	node: ts.Node,
@@ -9,13 +9,13 @@ export function findInnerMostNodeAt(
 	}
 	let result: ts.Node = node;
 	node.forEachChild(
-		node => {
+		(node) => {
 			const c = findInnerMostNodeAt(node, position);
 			if (c) {
 				result = c;
 			}
 		},
-		arr => {
+		(arr) => {
 			for (const item of arr) {
 				const c = findInnerMostNodeAt(item, position);
 				if (c) {
@@ -26,4 +26,17 @@ export function findInnerMostNodeAt(
 	);
 
 	return result;
+}
+
+export function findAncestor(
+	node: ts.Node,
+	predicate: (node: ts.Node) => boolean
+): ts.Node | undefined {
+	if (predicate(node)) {
+		return node;
+	}
+	if (node.parent) {
+		return findAncestor(node.parent, predicate);
+	}
+	return undefined;
 }

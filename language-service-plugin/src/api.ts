@@ -1,5 +1,4 @@
-export * from "./RpcServer";
-import * as typescript from "typescript/lib/tsserverlibrary";
+import type * as typescript from "typescript/lib/tsserverlibrary";
 export { typescript };
 import * as types from "io-ts";
 

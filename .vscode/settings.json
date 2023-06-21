@@ -1,6 +1,10 @@
 {
 	"rpcServer.nodeDebugger.autoAttachLabels": ["lsp"],
+	
 	"mochaExplorer.files": "language-service-plugin\\dist\\test\\*.test.js",
 	"mochaExplorer.require": "source-map-support/register",
-	"mochaExplorer.logpanel": true
+	"mochaExplorer.logpanel": true,
+
+	"editor.formatOnSave": true,
+	"tasksStatusbar.taskLabelFilter": "dev"
 }

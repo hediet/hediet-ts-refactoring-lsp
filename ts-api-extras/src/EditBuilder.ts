@@ -1,4 +1,4 @@
-import * as typescript from "typescript";
+import type * as typescript from "typescript";
 
 export class EditBuilder {
 	public readonly edits = new Array<typescript.FileTextChanges>();
@@ -17,6 +17,26 @@ export class EditBuilder {
 						length: 0,
 					},
 					newText: text,
+				},
+			],
+		});
+	}
+
+	public replaceArray(
+		node: typescript.NodeArray<any>,
+		newText: string,
+		sourceFile: typescript.SourceFile
+	): void {
+		this.edits.push({
+			fileName: sourceFile.fileName,
+			isNewFile: false,
+			textChanges: [
+				{
+					span: {
+						start: node.pos,
+						length: node.end - node.pos,
+					},
+					newText: newText,
 				},
 			],
 		});

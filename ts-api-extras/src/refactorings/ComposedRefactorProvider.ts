@@ -1,4 +1,4 @@
-import * as typescript from "typescript";
+import type * as typescript from "typescript";
 import { RefactorProvider, RefactorFilter, Refactor } from "./RefactorProvider";
 
 export class ComposedRefactorProvider extends RefactorProvider {

@@ -1,17 +1,8 @@
-import * as ts from "typescript/lib/tsserverlibrary";
+import type * as ts from "typescript/lib/tsserverlibrary";
 
 /*
 import { enableHotReload } from "@hediet/node-reload";
 if (process.env.NODE_ENV === "development") {
-	require("C:\\Users\\henni\\AppData\\Local\\Yarn\\Data\\global\\node_modules\\easy-attach\\")(
-		{
-			eagerExitDebugProxy: true,
-			debugPort: "preconfigured",
-			label: "lsp",
-			continue: false,
-		}
-	);
-
 	enableHotReload({ entryModule: module });
 }
 */
@@ -21,13 +12,9 @@ import {
 	RefactorProvider,
 	ComposedRefactorProvider,
 } from "@hediet/ts-api-extras";
-import { typescript, pluginId, configType, ConfigType } from "./api";
-import { ConvertToStringTemplateRefactoring } from "./Refactorings/ConvertToStringTemplateRefactoring";
-import { DestructureExpression } from "./Refactorings/DestructureExpression";
-import { CustomRefactoringProvider } from "./Refactorings/CustomRefactoringProvider";
-import { ThrowReporter } from "io-ts/lib/ThrowReporter";
+import { pluginId, configType, ConfigType } from "./api";
 import { Logger } from "./Logger";
-import { createLanguageServiceWithRpcServer } from "./createLanguageServiceWithRpcServer";
+import { AddMissingArgsFromContext } from "./refactors/AddMissingArgsFromContext";
 
 export = function init(modules: { typescript: typeof ts }) {
 	let logger: Logger | undefined;
@@ -51,15 +38,17 @@ export = function init(modules: { typescript: typeof ts }) {
 
 		refactorings.length = 0;
 		refactorings.push(
-			new ConvertToStringTemplateRefactoring(typescript, base),
-			new DestructureExpression(typescript, base)
+			// new ConvertToStringTemplateRefactoring(modules.typescript, base),
+			// new DestructureExpression(modules.typescript, base),
+			new AddMissingArgsFromContext(modules.typescript, base)
 		);
+		/*
 		if (config.customRefactorings) {
 			const { dir, pattern } = config.customRefactorings;
 			refactorings.push(
 				new CustomRefactoringProvider(typescript, base, dir, pattern)
 			);
-		}
+		}*/
 	}
 
 	let base: ts.LanguageService | undefined;
@@ -82,12 +71,6 @@ export = function init(modules: { typescript: typeof ts }) {
 				modules.typescript,
 				base,
 				refactoringProvider
-			);
-
-			decorated = createLanguageServiceWithRpcServer(
-				modules.typescript,
-				decorated,
-				info.project.projectService
 			);
 
 			return decorated;

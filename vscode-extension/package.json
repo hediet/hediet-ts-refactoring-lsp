@@ -3,7 +3,7 @@
 	"private": true,
 	"displayName": "Hediets TypeScript Language Service Plugin",
 	"description": "This is a VS Code Extension for refactorings and code actions that I had time and fun to program.",
-	"version": "0.3.1",
+	"version": "0.4.0",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.36.0"
@@ -22,22 +22,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onLanguage:typescript",
-		"onCommand:hediet-ts-lsp.smarter-select"
+		"onLanguage:typescript"
 	],
-	"main": "out/index",
+	"main": "dist/index",
 	"contributes": {
 		"typescriptServerPlugins": [
 			{
 				"enableForWorkspaceTypeScriptVersions": true,
 				"name": "@hediet/ts-lsp"
-			}
-		],
-		"commands": [
-			{
-				"enablement": "resourceLangId == typescript",
-				"title": "Smarter Select",
-				"command": "hediet-ts-lsp.smarter-select"
 			}
 		],
 		"configuration": {
@@ -59,24 +51,23 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "yarn run build",
-		"build": "tsc -p ./",
+		"build": "yarn build-tsc && yarn build-package",
+		"build-tsc": "webpack --mode production",
+		"build-package": "vsce package --yarn --baseImagesUrl https://github.com/hediet/hediet-ts-refactoring-lsp/raw/master/vscode-extension --baseContentUrl https://github.com/hediet/hediet-ts-refactoring-lsp/raw/master/vscode-extension",
 		"dev": "tsc -watch -p ./",
 		"test": "yarn run compile && node ./node_modules/vscode/bin/test"
 	},
 	"dependencies": {
 		"@hediet/node-reload": "^0.7.3",
 		"@hediet/std": "^0.6.0",
-		"@hediet/ts-lsp": "^0.2.1",
-		"@hediet/typed-json-rpc": "^0.7.7",
-		"@hediet/typed-json-rpc-websocket": "^0.7.7",
-		"ws": "^7.1.2"
+		"@hediet/ts-lsp": "*",
+		"vsce": "^2.9.1"
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^12.7.5",
 		"@types/vscode": "^1.36.0",
 		"tslint": "^5.20.0",
-		"typescript": "^3.6.3"
+		"typescript": "^4.7.4"
 	}
 }

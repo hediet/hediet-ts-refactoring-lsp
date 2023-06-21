@@ -1,5 +1,4 @@
-import { hotClass, registerUpdateReconciler } from "@hediet/node-reload";
-import * as typescript from "typescript";
+import type * as typescript from "typescript";
 import {
 	Refactor,
 	RefactorAction,
@@ -7,9 +6,6 @@ import {
 	findInnerMostNodeAt,
 } from "@hediet/ts-api-extras";
 
-registerUpdateReconciler(module);
-
-@hotClass(module)
 export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 	public static readonly refactoringName = "@hediet/ts-refactoring-lsp";
 	public static readonly actionName = "convertToStringTemplate";
@@ -66,14 +62,13 @@ export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 		return n;
 	}
 
-	private getParts(
-		node: typescript.Node
-	):
+	private getParts(node: typescript.Node):
 		| {
 				kind: "stringLiteralSequence";
 				parts: (
 					| typescript.Node
-					| { kind: "stringPart"; text: string })[];
+					| { kind: "stringPart"; text: string }
+				)[];
 		  }
 		| { kind: "node"; parts: [typescript.Node] } {
 		if (this.ts.isStringLiteral(node)) {
@@ -106,7 +101,9 @@ export class ConvertToStringTemplateRefactoring extends RefactorProvider {
 		parts: (typescript.Node | { kind: "stringPart"; text: string })[]
 	) {
 		const body = parts
-			.map(p => (p.kind === "stringPart" ? p.text : `\${${p.getText()}}`))
+			.map((p) =>
+				p.kind === "stringPart" ? p.text : `\${${p.getText()}}`
+			)
 			.join("");
 
 		const fullText = sourceFile.getFullText();

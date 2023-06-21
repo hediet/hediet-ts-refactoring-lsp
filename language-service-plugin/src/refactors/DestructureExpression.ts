@@ -1,5 +1,4 @@
-import { hotClass, registerUpdateReconciler } from "@hediet/node-reload";
-import * as typescript from "typescript";
+import type * as typescript from "typescript";
 import {
 	findInnerMostNodeAt,
 	Refactor,
@@ -7,9 +6,6 @@ import {
 	RefactorProvider,
 } from "@hediet/ts-api-extras";
 
-registerUpdateReconciler(module);
-
-@hotClass(module)
 export class DestructureExpression extends RefactorProvider {
 	public static readonly refactoringName = "@hediet/ts-refactoring-lsp";
 	public static readonly actionName = "destructureExpression";
@@ -30,7 +26,7 @@ export class DestructureExpression extends RefactorProvider {
 		if (!child) {
 			return [];
 		}
-		const statement = findParent(child, typescript.isExpressionStatement);
+		const statement = findParent(child, this.ts.isExpressionStatement);
 		if (!statement) {
 			return [];
 		}
@@ -38,7 +34,7 @@ export class DestructureExpression extends RefactorProvider {
 		const checker = context.program.getTypeChecker();
 		const type = checker.getTypeAtLocation(statement.expression);
 
-		const propNames = type.getProperties().map(p => p.name);
+		const propNames = type.getProperties().map((p) => p.name);
 		if (propNames.length === 0) {
 			return [];
 		}

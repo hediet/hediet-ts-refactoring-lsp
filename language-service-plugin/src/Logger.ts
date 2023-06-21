@@ -1,4 +1,4 @@
-import * as ts_module from "typescript/lib/tsserverlibrary";
+import type * as ts_module from "typescript/lib/tsserverlibrary";
 
 export class Logger {
 	public static forPlugin(

@@ -4,7 +4,7 @@ import {
 	expectRefactoring,
 	expectNoRefactoring,
 } from "@hediet/ts-api-extras/dist/src/test-utils";
-import { ConvertToStringTemplateRefactoring } from "../src/Refactorings/ConvertToStringTemplateRefactoring";
+import { ConvertToStringTemplateRefactoring } from "../src/refactors/ConvertToStringTemplateRefactoring";
 import { createLanguageServiceWithRefactorings } from "@hediet/ts-api-extras";
 import ts = require("typescript/lib/tsserverlibrary");
 

@@ -1,4 +1,4 @@
-import * as typescript from "typescript";
+import type * as typescript from "typescript";
 
 export abstract class RefactorProvider {
 	/**

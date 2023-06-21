@@ -6,7 +6,7 @@ import {
 } from "@hediet/ts-api-extras/dist/src/test-utils";
 import { createLanguageServiceWithRefactorings } from "@hediet/ts-api-extras";
 import ts = require("typescript/lib/tsserverlibrary");
-import { DestructureExpression } from "../src/Refactorings/DestructureExpression";
+import { DestructureExpression } from "../src/refactors/DestructureExpression";
 
 describe("destructureExpression", () => {
 	const action = {

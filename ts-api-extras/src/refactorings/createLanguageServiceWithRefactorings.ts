@@ -1,4 +1,4 @@
-import * as ts from "typescript/lib/tsserverlibrary";
+import type * as ts from "typescript/lib/tsserverlibrary";
 import { RefactorProvider } from "./RefactorProvider";
 
 export function createLanguageServiceWithRefactorings(
@@ -90,11 +90,11 @@ export function createLanguageServiceWithRefactorings(
 				{ refactorName, actionName }
 			);
 
-			const r = refactorings.find(r => r.name === refactorName);
+			const r = refactorings.find((r) => r.name === refactorName);
 			if (!r) {
 				return undefined;
 			}
-			const a = r.actions.find(a => a.name === actionName);
+			const a = r.actions.find((a) => a.name === actionName);
 			if (!a) {
 				return undefined;
 			}

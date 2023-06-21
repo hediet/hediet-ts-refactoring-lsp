@@ -4,21 +4,11 @@ import {
 	RefactorProvider,
 	ComposedRefactorProvider,
 } from "@hediet/ts-api-extras";
-import * as typescript from "typescript";
+import type * as typescript from "typescript";
 import * as tsNode from "ts-node";
 import * as fg from "fast-glob";
-import {
-	registerUpdateReconciler,
-	hotClass,
-	enableHotReload,
-} from "@hediet/node-reload";
 import { join } from "path";
 
-enableHotReload({ entryModule: module });
-
-registerUpdateReconciler(module);
-
-@hotClass(module)
 export class CustomRefactoringProvider extends RefactorProvider {
 	constructor(
 		protected readonly ts: typeof typescript,

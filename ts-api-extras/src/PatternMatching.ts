@@ -1,4 +1,4 @@
-import * as typescript from "typescript";
+import type * as typescript from "typescript";
 
 function isNode(obj: unknown): obj is ts.Node {
 	return !!(typeof obj === "object" && obj && "pos" in obj);
@@ -39,7 +39,9 @@ export abstract class Match<TRoot, TVars> {
 		const all = this.getAll(name);
 		if (all.length !== 1) {
 			throw new Error(
-				`Expected "${name}" to match exactly once, but matched ${all.length} times.`
+				`Expected "${name.toString()}" to match exactly once, but matched ${
+					all.length
+				} times.`
 			);
 		}
 		return all[0];
@@ -99,7 +101,7 @@ x*/
 
 type UnionToIntersection<U> = { x: U } extends { x: never }
 	? {}
-	: (U extends any ? (k: U) => void : never) extends ((k: infer I) => void)
+	: (U extends any ? (k: U) => void : never) extends (k: infer I) => void
 	? I
 	: never;
 
@@ -133,7 +135,7 @@ export function PatternFactory(ts: typeof typescript) {
 					.map((childNode, idx) => {
 						let parentPropertyName = findKey(childNode, node) || "";
 						if (childNode.kind == ts.SyntaxKind.SyntaxList) {
-							childNode.getChildren().some(c => {
+							childNode.getChildren().some((c) => {
 								parentPropertyName = findKey(c, node) || "";
 								return !!parentPropertyName;
 							});
@@ -153,17 +155,17 @@ export function PatternFactory(ts: typeof typescript) {
 							pattern: getPattern(childNode),
 						};
 					})
-					.filter(c => c !== null);
+					.filter((c) => c !== null);
 
 				if (node.kind === ts.SyntaxKind.SyntaxList) {
 					return `Pattern.list([ ${children
-						.map(c => `${c!.pattern}`)
+						.map((c) => `${c!.pattern}`)
 						.join(", ")} ])`;
 				}
 
 				return `Pattern.node(ts.SyntaxKind.${name}, { ${children
 					.map(
-						c =>
+						(c) =>
 							`${JSON.stringify(c!.parentPropertyName)}: ${
 								c!.pattern
 							}`
@@ -189,29 +191,29 @@ export function PatternFactory(ts: typeof typescript) {
 			const val = value;
 			return val
 				? new PredicatePattern(
-						n => ts.isIdentifier(n) && n.getText() === val
+						(n) => ts.isIdentifier(n) && n.getText() === val
 				  )
-				: new PredicatePattern(n => ts.isIdentifier(n));
+				: new PredicatePattern((n) => ts.isIdentifier(n));
 		},
 
 		parent<TValue extends ts.Node, TOut, TVars>(
 			parentPattern: Pattern<ts.Node, TOut, TVars>
 		): Pattern<TValue, TOut, TVars> {
-			return new FnPattern(node => {
+			return new FnPattern((node) => {
 				return parentPattern.match(node.parent);
 			});
 		},
 
 		any<T>(): Pattern<T, T> {
-			return new PredicatePattern(n => true);
+			return new PredicatePattern((n) => true);
 		},
 
 		test<T>(fn: (n: T) => boolean): Pattern<T, T> {
-			return new PredicatePattern(n => fn(n));
+			return new PredicatePattern((n) => fn(n));
 		},
 
 		ofType<T>(type: { new (): T } | Function): Pattern<T, T> {
-			return new PredicatePattern(n => n instanceof type);
+			return new PredicatePattern((n) => n instanceof type);
 		},
 
 		list<TVars extends Vars = {}, TVarsRest extends Vars = {}>(
@@ -223,7 +225,7 @@ export function PatternFactory(ts: typeof typescript) {
 				};
 			}
 		): Pattern<unknown, ts.Node[], TVars & TVarsRest> {
-			return new FnPattern(node => {
+			return new FnPattern((node) => {
 				if (!Array.isArray(node)) {
 					return false;
 				}
@@ -305,7 +307,7 @@ export abstract class Pattern<
 	public or<TValue2, TOut2, TVars2 extends Vars>(
 		other: Pattern<TValue2, TOut2, TVars2>
 	): Pattern<TValue & TValue2, TOut | TOut2, TVars & TVars2> {
-		return new FnPattern(value => {
+		return new FnPattern((value) => {
 			const m = this.match(value);
 			if (m) {
 				return m;
@@ -317,7 +319,7 @@ export abstract class Pattern<
 	public and<TOut2, TVars2 extends Vars>(
 		other: Pattern<TOut, TOut2, TVars2>
 	): Pattern<TValue, TOut2, TVars & TVars2> {
-		return new FnPattern(value => {
+		return new FnPattern((value) => {
 			const m = this.match(value);
 			if (!m) {
 				return false;
@@ -338,7 +340,7 @@ export abstract class Pattern<
 	public named<TName extends string>(
 		name: TName
 	): Pattern<TValue, TOut, { [TKey in TName]: TOut } & TVars> {
-		return new FnPattern(value => {
+		return new FnPattern((value) => {
 			const m = this.match(value);
 			if (!m) {
 				return false;
@@ -359,7 +361,7 @@ class PredicatePattern<T, TOut = T> extends Pattern<T, TOut> {
 	match(value: T): Match<TOut, {}> | false {
 		const result = this.test(value);
 		if (result) {
-			return new MatchImpl((value as any) as TOut);
+			return new MatchImpl(value as any as TOut);
 		}
 		return false;
 	}

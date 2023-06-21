@@ -1,4 +1,4 @@
-import * as typescript from "typescript";
+import type * as typescript from "typescript";
 import {
 	RefactorProvider,
 	Refactor,
@@ -8,6 +8,8 @@ import {
 import { EditBuilder } from "../EditBuilder";
 
 export abstract class RefactorProviderBase extends RefactorProvider {
+	abstract get refactorName(): string;
+
 	constructor(
 		protected readonly ts: typeof typescript,
 		protected readonly base: typescript.LanguageService
@@ -23,11 +25,13 @@ export abstract class RefactorProviderBase extends RefactorProvider {
 		},
 		filter: RefactorFilter
 	): Refactor[] {
+		if (filter.refactorName && filter.refactorName !== this.refactorName) {
+			return [];
+		}
+
 		const result = new Array<Refactor>();
+		const that = this;
 		this.collectRefactors(context, filter, {
-			addRefactor(r) {
-				result.push(r);
-			},
 			addRefactorAction(r) {
 				if ("collectEdits" in r) {
 					this.addRefactorAction({
@@ -40,10 +44,10 @@ export abstract class RefactorProviderBase extends RefactorProvider {
 						},
 					});
 				} else {
-					this.addRefactor({
+					result.push({
 						actions: [r],
-						description: r.description,
-						name: r.name,
+						description: "",
+						name: that.refactorName,
 					});
 				}
 			},
@@ -73,7 +77,6 @@ export interface RefactorActionWithEditBuilder {
 }
 
 export interface RefactorCollector {
-	addRefactor(refactor: Refactor): void;
 	addRefactorAction(
 		refactorAction: RefactorAction | RefactorActionWithEditBuilder
 	): void;

@@ -6,6 +6,13 @@ export class VirtualLanguageServiceHost implements ts.LanguageServiceHost {
 		private readonly compilationSettings: ts.CompilerOptions
 	) {}
 
+	readFile(path: string, encoding?: string | undefined): string | undefined {
+		return this.files.get(path);
+	}
+	fileExists(path: string): boolean {
+		return this.files.has(path);
+	}
+
 	public getScriptFileNames(): string[] {
 		return [...this.files.keys()];
 	}
